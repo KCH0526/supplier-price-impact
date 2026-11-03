@@ -1,3 +1,4 @@
-pandas>=2.0
-openpyxl>=3.1
-pytest>=7.0
+pandas>=2.0,<4.0
+openpyxl>=3.1,<4.0
+pytest>=7.0,<10.0
+streamlit>=1.60,<2.0
