@@ -98,7 +98,9 @@ def build_report(matched: MatchResult, costs: CostResult, as_of: dt.date) -> byt
         ("幣別與單位", "TWD、每一件成品；不做自動幣別或單位換算"),
     ]
     for key, val in records:
-        overview.append([key, val])
+        # Every value, including IDs copied from uploads, goes through the
+        # formula-injection guard.
+        overview.append([key, _safe_value(val)])
     overview.column_dimensions["A"].width = 34
     overview.column_dimensions["B"].width = 88
     overview.freeze_panes = "B2"
