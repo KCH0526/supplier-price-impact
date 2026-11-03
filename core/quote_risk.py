@@ -174,7 +174,8 @@ def assess_quote_risk(
         })
         change = new_cost - old_cost
         if change > 0:
-            cost_note = f"單件成本增加 {change.quantize(_CENT)}（{SCENARIO_NOTE}：{out['報價情境成本增加'].quantize(_CENT)}）"
+            cost_note = (f"單件成本增加 {change.quantize(_CENT)}，"
+                         f"報價情境成本增加 {out['報價情境成本增加'].quantize(_CENT)}（依報價數量推估）")
         elif change < 0:
             cost_note = f"成本下降，單件減少 {(-change).quantize(_CENT)}"
         else:

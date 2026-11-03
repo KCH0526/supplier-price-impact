@@ -113,6 +113,8 @@ def test_streamlit_config_disables_telemetry_and_limits_uploads():
     # calls checkip.amazonaws.com at startup unless browser.serverAddress is
     # set manually. Keep that outbound lookup disabled.
     assert cfg["browser"]["serverAddress"] == "localhost"
+    # Hide the "Deploy" button that points users to public Streamlit hosting.
+    assert cfg["client"]["toolbarMode"] == "minimal"
 
 
 def test_docker_publishes_only_on_localhost_and_uses_python_311():

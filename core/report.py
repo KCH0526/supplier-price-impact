@@ -12,13 +12,27 @@ from openpyxl.utils import get_column_letter
 
 from core.calculator import CostResult, AUDIT_COLUMNS, IMPACT_COLUMNS
 from core.matcher import MatchResult, EXCEPTION_COLUMNS
+from core.quote_risk import (
+    QUOTE_EXCEPTION_COLUMNS,
+    RISK_COLUMNS,
+    STATUS_EXCLUDED,
+    STATUS_OK,
+    STATUS_REVIEW,
+    STATUS_UNRELIABLE,
+    QuoteRiskResult,
+)
 
 MONEY = {
     "原材料成本", "新材料成本", "原成本", "新成本", "成本增加", "預估月成本增加",
     "原材料金額", "新材料金額", "單行成本差額", "原單價", "試算新單價",
+    # Quote Risk. 維持底線所需最低單價 is already rounded UP to the cent by
+    # core.quote_risk, so quantizing it again cannot lower it.
+    "未稅報價單價", "原完整成本", "新完整成本", "報價情境成本增加", "維持底線所需最低單價",
 }
-PERCENT = {"成本增加百分比", "原毛利率", "新毛利率"}
-QTY = {"用量", "預估月產量"}
+PERCENT = {"成本增加百分比", "原毛利率", "新毛利率", "設定毛利率底線"}
+QTY = {"用量", "預估月產量", "報價數量"}
+TEXT = {"成品編號", "子件料號", "供應商代碼", "報價單號", "行號", "客戶代碼"}
+REVIEW_FILL = PatternFill("solid", fgColor="F8D7DA")
 DATE = {"報價生效日"}
 
 
@@ -63,18 +77,24 @@ def _table(ws, columns, dataframe):
                     cell.number_format = "0.00%"
                 elif col in QTY:
                     cell.number_format = '#,##0.####'
-                elif col in ("成品編號", "子件料號", "供應商代碼", "報價單號"):
+                elif col == "毛利率下降百分點":
+                    cell.number_format = "0.00"
+                elif col in TEXT:
                     cell.number_format = "@"
                 cell.alignment = Alignment(vertical="top")
         # Shorter for numeric columns; leave space for Chinese descriptions.
         width = min(48, max(14, len(col) * 2 + 3))
-        if col in ("原因", "成本資料備註"):
+        if col in ("原因", "成本資料備註", "問題原因"):
             width = 48
         ws.column_dimensions[get_column_letter(index)].width = width
 
 
-def build_report(matched: MatchResult, costs: CostResult, as_of: dt.date) -> bytes:
-    """Return the result.xlsx bytes. Never writes the original uploads to disk."""
+def build_report(matched: MatchResult, costs: CostResult, as_of: dt.date,
+                 quote_risk: QuoteRiskResult | None = None) -> bytes:
+    """Return the result.xlsx bytes. Never writes the original uploads to disk.
+
+    With ``quote_risk`` the workbook also gets Quote Risk and Quote Exceptions.
+    """
     wb = openpyxl.Workbook()
     overview = wb.active
     overview.title = "Summary"
@@ -97,6 +117,21 @@ def build_report(matched: MatchResult, costs: CostResult, as_of: dt.date) -> byt
         ("毛利率條件", "僅完整人工、製費、其他成本與有效 TWD 未稅售價皆具備時顯示"),
         ("幣別與單位", "TWD、每一件成品；不做自動幣別或單位換算"),
     ]
+    if quote_risk is not None:
+        q = quote_risk.summary
+        records += [
+            ("客戶報價：最低毛利率底線", f"{q['設定毛利率底線'] * 100:.2f}%"),
+            ("客戶報價：總列數", q["報價總列數"]),
+            ("客戶報價：需人工覆核", q[STATUS_REVIEW]),
+            ("客戶報價：尚符合設定底線", q[STATUS_OK]),
+            ("客戶報價：無法可靠判斷", q[STATUS_UNRELIABLE]),
+            ("客戶報價：不納入試算", q[STATUS_EXCLUDED]),
+            ("報價情境成本增加合計（TWD）", _safe_value(q["報價情境成本增加合計"], "報價情境成本增加")),
+            ("需人工覆核報價情境成本增加（TWD）",
+             _safe_value(q["需人工覆核報價情境成本增加合計"], "報價情境成本增加")),
+            ("情境金額說明", q["情境金額說明"]),
+            ("覆核提醒", "本報告不修改 ERP、不調整或寄送客戶報價；所有建議都需要人工覆核"),
+        ]
     for key, val in records:
         # Every value, including IDs copied from uploads, goes through the
         # formula-injection guard.
@@ -113,6 +148,14 @@ def build_report(matched: MatchResult, costs: CostResult, as_of: dt.date) -> byt
     _table(impact, IMPACT_COLUMNS, costs.cost_impact)
     _table(exceptions, EXCEPTION_COLUMNS, matched.exceptions)
     _table(audit, AUDIT_COLUMNS, costs.line_audit)
+    if quote_risk is not None:
+        risk_ws = wb.create_sheet("Quote Risk")
+        _table(risk_ws, RISK_COLUMNS, quote_risk.risk)
+        status_col = RISK_COLUMNS.index("覆核狀態") + 1
+        for row in risk_ws.iter_rows(min_row=2, min_col=status_col, max_col=status_col):
+            if row[0].value == STATUS_REVIEW:
+                row[0].fill = REVIEW_FILL
+        _table(wb.create_sheet("Quote Exceptions"), QUOTE_EXCEPTION_COLUMNS, quote_risk.exceptions)
 
     output = BytesIO()
     wb.save(output)
