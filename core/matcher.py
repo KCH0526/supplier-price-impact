@@ -103,9 +103,31 @@ def _error_reasons(issues) -> dict[int, list[str]]:
     return out
 
 
-def _bom_line_problems(rec, bad_reasons):
+def _bom_line_problems(rec, bad_reasons, as_of, plants, versions_by_product):
     """Blocking problems that come from the BOM line itself."""
     problems = [("BOM 資料無效", r) for r in bad_reasons]
+    start = parse_date(rec.get("生效起日"))
+    end = parse_date(rec.get("生效迄日"))
+    if start is not None and end is not None and start > end:
+        problems.append(("BOM 生效區間無效", f"BOM 生效起日 {start} 晚於生效迄日 {end}"))
+    elif start is not None and start > as_of:
+        problems.append(("BOM 尚未生效", f"BOM 生效起日 {start} 晚於試算基準日 {as_of}"))
+    elif end is not None and end < as_of:
+        problems.append(("BOM 已過期", f"BOM 生效迄日 {end} 早於試算基準日 {as_of}"))
+
+    if "成品單位" in rec and _text(rec, "成品單位") != "pcs":
+        problems.append(("成品單位不支援", f"成品單位為「{_text(rec, '成品單位') or '空白'}」，MVP 只接受 pcs／單件"))
+    if "工廠代碼" in rec and _text(rec, "工廠代碼") is None:
+        problems.append(("工廠代碼缺失", "已有工廠欄位但此 BOM 行未指定工廠，無法確認成本範圍"))
+    if len(plants) > 1:
+        problems.append(("多工廠混用", f"本次 BOM 同時包含 {', '.join(sorted(plants))}，MVP 只支援單一工廠"))
+    product = _text(rec, "成品編號")
+    if "BOM版本" in rec and _text(rec, "BOM版本") is None:
+        problems.append(("BOM 版本缺失", "已有 BOM版本欄位但此行未指定版本"))
+    versions = versions_by_product.get(product, set())
+    if len(versions) > 1:
+        problems.append(("BOM 版本衝突", f"同一成品同時包含 {', '.join(sorted(versions))}，請先選定一個有效版本"))
+
     status = _text(rec, "BOM狀態") if "BOM狀態" in rec else APPROVED_BOM
     if status != APPROVED_BOM:
         problems.append(("BOM 未核准", f"BOM狀態為「{status or '空白'}」，只接受「{APPROVED_BOM}」"))
@@ -136,6 +158,12 @@ def match_prices(bom: pd.DataFrame, price: pd.DataFrame, as_of: dt.date) -> Matc
     bad_price = _error_reasons(validate_price_increase(price))
     bom_records = bom.to_dict("records")
     bom_items = {_text(r, "子件料號") for r in bom_records} - {None}
+    plants = {_text(r, "工廠代碼") for r in bom_records} - {None}
+    versions_by_product: dict[str | None, set[str]] = {}
+    for rec in bom_records:
+        version = _text(rec, "BOM版本")
+        if version is not None:
+            versions_by_product.setdefault(_text(rec, "成品編號"), set()).add(version)
 
     # ---- classify every quote row ----
     usable: dict[str, list[dict]] = {}      # item -> applicable, approved, valid quotes
@@ -180,7 +208,7 @@ def match_prices(bom: pd.DataFrame, price: pd.DataFrame, as_of: dt.date) -> Matc
         b_currency = _text(b, "原單價幣別") or SUPPORTED_CURRENCY
         blocked = False
 
-        for kind, reason in _bom_line_problems(b, bad_bom.get(row, [])):
+        for kind, reason in _bom_line_problems(b, bad_bom.get(row, []), as_of, plants, versions_by_product):
             exc.add(kind, BOM_SHEET, row, item, b_supplier, reason, blocking=True, product=product)
             blocked = True
 
@@ -261,7 +289,9 @@ def match_prices(bom: pd.DataFrame, price: pd.DataFrame, as_of: dt.date) -> Matc
         seen[p]["可計算行數"] += int(line["_ok"])
     for s in status_rows:
         p = s["成品編號"]
-        s["狀態"] = INCOMPLETE if p in blocked_items else COMPLETE
+        # A missing product identifier cannot be attached to exception product
+        # names. Also check line completeness directly so it can never pass.
+        s["狀態"] = INCOMPLETE if p in blocked_items or s["可計算行數"] < s["BOM行數"] else COMPLETE
         s["阻擋例外數"] = blocking_count.get(p, 0)
         s["阻擋料號"] = ", ".join(sorted(i for i in blocked_items.get(p, set()) if i))
 
