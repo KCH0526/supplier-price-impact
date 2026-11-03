@@ -76,3 +76,27 @@ def test_two_file_flow_still_produces_cost_report():
     wb = openpyxl.load_workbook(BytesIO(app.session_state["latest_report"]["file"]), data_only=True)
     assert wb.sheetnames == ["Summary", "Cost Impact", "Exceptions", "Line Audit"]
     assert dict(wb["Summary"].values)["預估每月總成本增加（TWD）"] == 61597
+
+
+def test_edge_case_quotes_do_not_crash_and_are_reported():
+    app = _app()
+    app.file_uploader[0].upload("sample_bom.xlsx", (ROOT / "samples" / "sample_bom.xlsx").read_bytes())
+    app.file_uploader[1].upload("sample_price_increase.xlsx",
+                                (ROOT / "samples" / "sample_price_increase.xlsx").read_bytes())
+    app.file_uploader[2].upload("edge.xlsx",
+                                (ROOT / "tests" / "fixtures" / "test_open_quotes_edge_cases.xlsx").read_bytes())
+    app.run()
+    _button(app).click().run()
+    assert not app.exception
+    risk = app.session_state["latest_report"]["risk"]
+    assert risk.summary["無法可靠判斷"] == 9 and risk.summary["不納入試算"] == 3
+    assert any(s.value == "客戶報價例外" for s in app.subheader)
+
+
+def test_wrong_file_in_quote_slot_shows_error():
+    app = _app()
+    _upload(app, quotes=False)
+    app.file_uploader[2].upload("bom_again.xlsx", (ROOT / "samples" / "sample_bom.xlsx").read_bytes())
+    app.run()
+    assert not app.exception
+    assert any("無法讀取必要工作表" in e.value for e in app.error)
