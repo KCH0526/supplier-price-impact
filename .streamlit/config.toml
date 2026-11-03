@@ -1,5 +1,10 @@
 [browser]
 gatherUsageStats = false
+# Setting this explicitly stops Streamlit from looking up the server's public
+# IP (checkip.amazonaws.com) at startup when bound to 0.0.0.0 in Docker.
+serverAddress = "localhost"
 
 [server]
 headless = true
+# Upload limit in MB (Streamlit default is 200). Matches core.reader.MAX_FILE_BYTES.
+maxUploadSize = 20

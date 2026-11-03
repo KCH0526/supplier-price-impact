@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import io
 import os
+import zipfile
 from dataclasses import dataclass, field
 from typing import Any, BinaryIO, Union
 
@@ -31,6 +32,18 @@ from core.validation import (
 
 Source = Union[str, os.PathLike, bytes, BinaryIO]
 
+# Resource limits for untrusted uploads. An .xlsx is a ZIP archive, so the
+# archive is inspected before openpyxl parses anything (decompression bombs).
+MAX_FILE_BYTES = 20 * 1024 * 1024          # compressed file size
+MAX_UNCOMPRESSED_BYTES = 200 * 1024 * 1024  # sum of all archive members
+MAX_COMPRESSION_RATIO = 200                 # per member larger than 1 MB
+MAX_ARCHIVE_MEMBERS = 2000
+MAX_DATA_ROWS = 50_000                      # per worksheet
+
+
+class InputLimitError(ValueError):
+    """The upload exceeds a safety limit; the reason is user-facing text."""
+
 
 @dataclass
 class SheetResult:
@@ -49,12 +62,44 @@ def _clean(value: Any, column: str) -> Any:
     return value
 
 
-def _open_workbook(source: Source):
+def _load_bytes(source: Source) -> bytes:
     if isinstance(source, (bytes, bytearray)):
-        source = io.BytesIO(source)
-    elif hasattr(source, "seek"):
-        source.seek(0)
-    return openpyxl.load_workbook(source, read_only=True, data_only=True)
+        data = bytes(source)
+    elif hasattr(source, "read"):
+        if hasattr(source, "seek"):
+            source.seek(0)
+        data = source.read(MAX_FILE_BYTES + 1)
+    else:
+        if os.path.getsize(source) > MAX_FILE_BYTES:
+            raise InputLimitError(f"檔案過大（上限 {MAX_FILE_BYTES // (1024 * 1024)} MB）")
+        with open(source, "rb") as fh:
+            data = fh.read()
+    if len(data) > MAX_FILE_BYTES:
+        raise InputLimitError(f"檔案過大（上限 {MAX_FILE_BYTES // (1024 * 1024)} MB）")
+    return data
+
+
+def _check_archive(data: bytes) -> None:
+    try:
+        with zipfile.ZipFile(io.BytesIO(data)) as zf:
+            members = zf.infolist()
+    except zipfile.BadZipFile as exc:
+        raise ValueError(f"不是有效的 .xlsx 檔案（{exc}）") from exc
+    if len(members) > MAX_ARCHIVE_MEMBERS:
+        raise InputLimitError(f"檔案結構異常：壓縮檔內含 {len(members)} 個項目")
+    total = sum(m.file_size for m in members)
+    if total > MAX_UNCOMPRESSED_BYTES:
+        raise InputLimitError(
+            f"檔案解壓縮後過大（{total // (1024 * 1024)} MB，上限 {MAX_UNCOMPRESSED_BYTES // (1024 * 1024)} MB）")
+    for m in members:
+        if m.file_size > 1024 * 1024 and m.file_size > MAX_COMPRESSION_RATIO * max(m.compress_size, 1):
+            raise InputLimitError(f"檔案結構異常：{m.filename} 壓縮比過高，可能是解壓縮炸彈")
+
+
+def _open_workbook(source: Source):
+    data = _load_bytes(source)
+    _check_archive(data)
+    return openpyxl.load_workbook(io.BytesIO(data), read_only=True, data_only=True)
 
 
 def read_sheet(source: Source, sheet_name: str, required_columns: list[str]) -> SheetResult:
@@ -103,6 +148,11 @@ def read_sheet(source: Source, sheet_name: str, required_columns: list[str]) -> 
         for excel_row, values in enumerate(rows, start=2):
             if all(is_blank(v) for v in values):
                 continue
+            if len(records) >= MAX_DATA_ROWS:
+                return SheetResult(None, [Issue(
+                    sheet_name, excel_row, None,
+                    f"資料列過多（上限 {MAX_DATA_ROWS:,} 列）；請分批或先篩選必要資料", ERROR,
+                )])
             record = {ROW_COLUMN: excel_row}
             for name, idx in positions.items():
                 raw = values[idx] if idx < len(values) else None
