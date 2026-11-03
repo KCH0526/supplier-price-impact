@@ -27,10 +27,11 @@ docker compose up --build
 
 ## 3. 上傳與報告驗證
 
-1. 上傳 `samples/sample_bom.xlsx` 與 `samples/sample_price_increase.xlsx`。
-2. 試算基準日 2026-12-01，按「產生報告」。
+1. 上傳 `samples/sample_bom.xlsx`、`samples/sample_price_increase.xlsx`、`samples/sample_open_quotes.xlsx`。
+2. 試算基準日 2026-12-01、最低毛利率 15%，按「產生毛利風險報告」。
 3. 下載 `result.xlsx`，確認：
-   - 工作表：Summary、Cost Impact、Exceptions、Line Audit
+   - 工作表：Summary、Cost Impact、Exceptions、Line Audit、Quote Risk、Quote Exceptions
+   - Quote Risk：需人工覆核 3 筆（P-1003、P-1001、P-1005），P-1001 最低單價 1,026.12
    - 預估每月總成本增加：61,597.00
    - 6 款成品成本與 `tests/fixtures/expected_result_reference.xlsx` 的 Expected Numbers 一致
    - Line Audit 40 列，與參考檔逐列一致
@@ -45,6 +46,7 @@ docker compose up --build
 | 上傳大小上限 | Streamlit `maxUploadSize = 20`（MB）；讀取層同為 20 MB |
 | 解壓縮炸彈 | 解壓後總量上限 200 MB；單一項目 >1 MB 且壓縮比 >200 即拒絕 |
 | 資料列上限 | 每工作表 50,000 列 |
+| Streamlit「Deploy」按鈕（導向公開雲端） | 以 `client.toolbarMode = "minimal"` 隱藏 |
 | 上傳檔保存 | 只在記憶體處理，不寫入磁碟；容器內 `/app` 對執行者不可寫 |
 | Excel 公式注入 | 匯出時以 `=`、`+`、`-`、`@`、Tab、換行開頭的文字一律加前置 `'` |
 | 上傳檔中的公式 | 以 `data_only=True` 讀取，不執行公式 |
@@ -73,6 +75,9 @@ Docker 驗證說明：開發用雲端環境的 HTTPS 經過一個需額外信任
 所以驗證時是用一份**只多了「pip 安裝時信任該 CA」一步**的 Dockerfile 副本建置，
 repo 內的 `Dockerfile` 未加入該步驟。一般企業網路可直接 `docker compose up --build`；
 若企業本身也有 SSL 檢查 proxy，需由 IT 提供 CA 憑證。
+
+| 2026-11-03 | 三檔流程瀏覽器實測（BOM＋調價＋OpenQuotes） | Python 3.11.18，本機 Streamlit，Chromium | 成功；6 個工作表；需人工覆核 3 筆；情境合計 6,480.50；月成本 61,597；瀏覽器端外部請求 0 筆 |
+| 2026-11-03 | 「Deploy」按鈕 | 同上 | 已隱藏（頁面上數量 0） |
 
 ## 7. 尚未實際驗證
 

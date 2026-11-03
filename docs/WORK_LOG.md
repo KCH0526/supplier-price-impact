@@ -9,9 +9,9 @@
 | #1～#5 | 目錄整理、讀取驗證、配對、成本計算、Streamlit、Docker | 已合併 |
 | #6 | Python 3.11／Docker／安全驗收、CI | 已合併（main `70ee1bb`） |
 | #7 | OpenQuotes 讀取與驗證、產品決策紀錄 | 已合併（main `c10b673`） |
-| #8 | 毛利風險覆核引擎 `core/quote_risk.py` | 進行中 |
-| #9 | Streamlit 三檔上傳、Quote Risk 報告、README | 未開始 |
-| #10 | 對抗測試、交付文件（ONBOARDING、GO_TO_MARKET） | 未開始 |
+| #8 | 毛利風險覆核引擎 `core/quote_risk.py` | 已合併（main `031e723`） |
+| #9 | Streamlit 三檔上傳、Quote Risk 報告、README、ONBOARDING、GO_TO_MARKET | 進行中 |
+| #10 | 對抗測試、最終回歸與交付 | 未開始 |
 
 ## 常用指令
 

@@ -79,3 +79,80 @@ def test_user_content_cannot_become_excel_formula():
     assert cell.data_type != "f"
     assert cell.value.startswith("'")
     wb.close()
+
+
+# ---------- Quote Risk sheets (PR #9) ----------
+
+from decimal import Decimal  # noqa: E402
+
+from core.quote_reader import read_open_quotes  # noqa: E402
+from core.quote_risk import assess_quote_risk  # noqa: E402
+
+
+def _quote_report(quote_path=ROOT / "samples" / "sample_open_quotes.xlsx", floor=Decimal("0.15")):
+    matched, costs = _samples()
+    risk = assess_quote_risk(read_open_quotes(quote_path).data, costs, AS_OF, floor)
+    return openpyxl.load_workbook(BytesIO(build_report(matched, costs, AS_OF, risk)), data_only=True)
+
+
+def test_report_with_quotes_has_six_sheets_in_order():
+    wb = _quote_report()
+    assert wb.sheetnames == ["Summary", "Cost Impact", "Exceptions", "Line Audit", "Quote Risk", "Quote Exceptions"]
+
+
+def test_quote_risk_sheet_columns_order_and_case_a():
+    ws = _quote_report()["Quote Risk"]
+    headers = [c.value for c in ws[1]]
+    for col in ("客戶代碼", "報價單號", "行號", "成品編號", "未稅報價單價", "報價數量", "原完整成本",
+                "新完整成本", "原毛利率", "新毛利率", "毛利率下降百分點", "報價情境成本增加",
+                "設定毛利率底線", "維持底線所需最低單價", "覆核狀態", "問題原因", "來源Excel列號"):
+        assert col in headers, col
+    rows = [dict(zip(headers, r)) for r in ws.iter_rows(min_row=2, values_only=True)]
+    assert len(rows) == 8
+    assert [r["覆核狀態"] for r in rows[:3]] == ["需人工覆核"] * 3
+    assert all(r["問題原因"] for r in rows)
+    a = next(r for r in rows if r["成品編號"] == "P-1001" and r["客戶代碼"] == "C-001")
+    assert a["維持底線所需最低單價"] == 1026.12
+    assert a["報價情境成本增加"] == 1780
+    assert round(a["原毛利率"], 4) == 0.1634 and round(a["新毛利率"], 4) == 0.1278
+    assert a["設定毛利率底線"] == 0.15
+    assert a["來源Excel列號"] == 2
+    col = headers.index("新毛利率") + 1
+    assert ws.cell(2, col).number_format == "0.00%"
+    lz = next(r for r in rows if r["客戶代碼"] == "00125")
+    assert isinstance(lz["客戶代碼"], str)
+
+
+def test_min_price_is_not_rounded_down_in_export():
+    ws = _quote_report(floor=Decimal("0.10"))["Quote Risk"]
+    headers = [c.value for c in ws[1]]
+    rows = [dict(zip(headers, r)) for r in ws.iter_rows(min_row=2, values_only=True)]
+    a = next(r for r in rows if r["成品編號"] == "P-1001" and r["客戶代碼"] == "C-001")
+    assert a["維持底線所需最低單價"] == 969.12
+
+
+def test_quote_summary_and_scenario_wording():
+    summary = dict(_quote_report()["Summary"].values)
+    assert summary["客戶報價：需人工覆核"] == 3
+    assert summary["客戶報價：最低毛利率底線"] == "15.00%"
+    assert summary["報價情境成本增加合計（TWD）"] == 6480.5
+    assert "不是已確認訂單量" in summary["情境金額說明"]
+
+
+def test_quote_exceptions_sheet_lists_edge_problems():
+    wb = _quote_report(ROOT / "tests" / "fixtures" / "test_open_quotes_edge_cases.xlsx")
+    ws = wb["Quote Exceptions"]
+    headers = [c.value for c in ws[1]]
+    rows = [dict(zip(headers, r)) for r in ws.iter_rows(min_row=2, values_only=True)]
+    kinds = {r["類型"] for r in rows}
+    assert {"報價資料無效", "報價不納入試算", "報價尚未生效", "報價已過期", "成品不存在於 BOM"} <= kinds
+    assert all(r["原因"] for r in rows)
+
+
+def test_quote_sheets_have_no_formulas():
+    matched, costs = _samples()
+    q = read_open_quotes(ROOT / "samples" / "sample_open_quotes.xlsx").data
+    q.loc[0, "客戶代碼"] = '=HYPERLINK("http://example.invalid","x")'
+    risk = assess_quote_risk(q, costs, AS_OF)
+    wb = openpyxl.load_workbook(BytesIO(build_report(matched, costs, AS_OF, risk)))
+    assert [c.coordinate for ws in wb for row in ws.iter_rows() for c in row if c.data_type == "f"] == []

@@ -8,3 +8,7 @@ serverAddress = "localhost"
 headless = true
 # Upload limit in MB (Streamlit default is 200). Matches core.reader.MAX_FILE_BYTES.
 maxUploadSize = 20
+
+[client]
+# Hide the "Deploy" button: real cost and quote data must not go to public hosting.
+toolbarMode = "minimal"
