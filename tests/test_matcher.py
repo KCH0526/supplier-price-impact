@@ -292,6 +292,77 @@ def test_required_columns_only_without_optional_columns():
     assert result.matched_items.iloc[0]["適用單價"] == Decimal("12")
 
 
+@pytest.mark.parametrize(
+    ("begin", "end", "expected_type"),
+    [
+        (dt.datetime(2026, 12, 2), dt.datetime(2027, 1, 1), "BOM 尚未生效"),
+        (dt.datetime(2026, 1, 1), dt.datetime(2026, 11, 30), "BOM 已過期"),
+        (dt.datetime(2027, 1, 1), dt.datetime(2026, 1, 1), "BOM 生效區間無效"),
+    ],
+)
+def test_bom_date_outside_scenario_blocks(begin, end, expected_type):
+    bom = frame(BOM_COLS, [["P-A", "A", "M-1", "x", "pcs", 1, 10, "V-1", begin, end]],
+                extra=["生效起日", "生效迄日"])
+    price = frame(PRICE_COLS, [["M-1", "x", "pcs", "TWD", 12, D, "V-1"]])
+    result = match_prices(bom, price, AS_OF)
+    assert expected_type in set(result.exceptions["類型"])
+    assert result.product_status.iloc[0]["狀態"] == INCOMPLETE
+    assert result.matched_items.empty
+
+
+def test_bom_effective_date_boundaries_inclusive():
+    bom = frame(BOM_COLS, [["P-A", "A", "M-1", "x", "pcs", 1, 10, "V-1", D, D]],
+                extra=["生效起日", "生效迄日"])
+    price = frame(PRICE_COLS, [["M-1", "x", "pcs", "TWD", 12, D, "V-1"]])
+    result = match_prices(bom, price, AS_OF)
+    assert result.product_status.iloc[0]["狀態"] == COMPLETE
+    assert result.matched_items.iloc[0]["適用單價"] == Decimal("12")
+
+
+def test_unsupported_finished_product_unit_blocks():
+    bom = frame(BOM_COLS, [["P-A", "A", "M-1", "x", "pcs", 1, 10, "V-1", "kg"]],
+                extra=["成品單位"])
+    price = frame(PRICE_COLS, [["M-1", "x", "pcs", "TWD", 12, D, "V-1"]])
+    result = match_prices(bom, price, AS_OF)
+    assert "成品單位不支援" in set(result.exceptions["類型"])
+    assert result.product_status.iloc[0]["狀態"] == INCOMPLETE
+
+
+def test_two_versions_of_same_product_block_only_that_product():
+    bom = frame(BOM_COLS, [
+        ["P-A", "A", "M-1", "x", "pcs", 1, 10, "V-1", "REV-A"],
+        ["P-A", "A", "M-2", "y", "pcs", 1, 10, "V-1", "REV-B"],
+        ["P-B", "B", "M-3", "z", "pcs", 1, 10, "V-1", "REV-C"],
+    ], extra=["BOM版本"])
+    price = frame(PRICE_COLS, [["M-3", "z", "pcs", "TWD", 12, D, "V-1"]])
+    result = match_prices(bom, price, AS_OF)
+    assert "BOM 版本衝突" in set(result.exceptions["類型"])
+    assert dict(zip(result.product_status["成品編號"], result.product_status["狀態"])) == {
+        "P-A": INCOMPLETE, "P-B": COMPLETE,
+    }
+    assert set(result.matched_items["成品編號"]) == {"P-B"}
+
+
+def test_multiple_plants_in_one_scenario_block_all_products():
+    bom = frame(BOM_COLS, [
+        ["P-A", "A", "M-1", "x", "pcs", 1, 10, "V-1", "TW01"],
+        ["P-B", "B", "M-2", "y", "pcs", 1, 10, "V-1", "TW02"],
+    ], extra=["工廠代碼"])
+    price = frame(PRICE_COLS, [["M-1", "x", "pcs", "TWD", 12, D, "V-1"]])
+    result = match_prices(bom, price, AS_OF)
+    assert "多工廠混用" in set(result.exceptions["類型"])
+    assert set(result.product_status["狀態"]) == {INCOMPLETE}
+    assert result.matched_items.empty
+
+
+def test_invalid_product_identifier_cannot_be_complete():
+    bom = frame(BOM_COLS, [[None, "A", "M-1", "x", "pcs", 1, 10, "V-1"]])
+    price = frame(PRICE_COLS, [["M-1", "x", "pcs", "TWD", 12, D, "V-1"]])
+    result = match_prices(bom, price, AS_OF)
+    assert result.product_status.iloc[0]["狀態"] == INCOMPLETE
+    assert result.matched_items.empty
+
+
 def test_quotes_from_two_suppliers_without_bom_supplier_block():
     bom = frame(BOM_COLS[:-1], [["P-A", "A", "M-1", "x", "pcs", 1, 10]])
     price = frame(PRICE_COLS, [
