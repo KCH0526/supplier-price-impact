@@ -77,19 +77,27 @@ def read_sheet(source: Source, sheet_name: str, required_columns: list[str]) -> 
         headers = [None if is_blank(h) else str(h).strip() for h in header_row]
         issues: list[Issue] = []
         for col in required_columns:
-            count = headers.count(col)
-            if count == 0:
+            if col not in headers:
                 issues.append(Issue(sheet_name, 1, col, f"缺少必要欄位「{col}」", ERROR))
-            elif count > 1:
-                issues.append(Issue(sheet_name, 1, col, f"必要欄位「{col}」重複出現 {count} 次", ERROR))
+
+        # Any non-blank header that appears more than once is ambiguous,
+        # whether required or an extension column; never pick one silently.
+        positions: dict[str, int] = {}
+        reported: set[str] = set()
+        for idx, name in enumerate(headers):
+            if name is None:
+                continue
+            if name not in positions:
+                positions[name] = idx
+            elif name not in reported:
+                reported.add(name)
+                issues.append(Issue(
+                    sheet_name, 1, name,
+                    f"欄位「{name}」在第 1 列重複出現 {headers.count(name)} 次，無法判斷應使用哪一欄",
+                    ERROR,
+                ))
         if issues:
             return SheetResult(None, issues)
-
-        # Keep the first occurrence of each named column (extension columns included).
-        positions: dict[str, int] = {}
-        for idx, name in enumerate(headers):
-            if name is not None and name not in positions:
-                positions[name] = idx
 
         records = []
         for excel_row, values in enumerate(rows, start=2):

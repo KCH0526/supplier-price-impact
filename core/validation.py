@@ -12,6 +12,7 @@ reason. ``ERROR`` issues block calculation; ``WARNING`` issues do not.
 from __future__ import annotations
 
 import datetime as dt
+import re
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 from typing import Any
@@ -89,15 +90,21 @@ def parse_number(value: Any) -> Decimal | None:
     return number if number.is_finite() else None
 
 
+_ISO_DATE = re.compile(r"\d{4}-\d{2}-\d{2}", re.ASCII)
+
+
 def parse_date(value: Any) -> dt.date | None:
-    """Accept real Excel dates or ISO text (YYYY-MM-DD). Bare numbers are rejected."""
+    """Accept real Excel dates or text that is exactly YYYY-MM-DD. Bare numbers are rejected."""
     if isinstance(value, dt.datetime):
         return value.date()
     if isinstance(value, dt.date):
         return value
     if isinstance(value, str):
+        text = value.strip()
+        if not _ISO_DATE.fullmatch(text):
+            return None
         try:
-            return dt.date.fromisoformat(value.strip()[:10])
+            return dt.date.fromisoformat(text)
         except ValueError:
             return None
     return None

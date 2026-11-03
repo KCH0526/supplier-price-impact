@@ -64,8 +64,22 @@ def test_parse_date():
     assert parse_date(D) == dt.date(2026, 12, 1)
     assert parse_date(dt.date(2026, 12, 1)) == dt.date(2026, 12, 1)
     assert parse_date("2026-12-01") == dt.date(2026, 12, 1)
+    assert parse_date(" 2026-12-01 ") == dt.date(2026, 12, 1)
     for bad in (None, "", "下個月", "2026-13-01", 46000):
         assert parse_date(bad) is None
+
+
+@pytest.mark.parametrize(
+    "bad",
+    ["2026-12-01錯誤", "2026-12-01 abc", "2026-12-01T00:00", "2026-12-1", "20261201", "2026/12/01"],
+)
+def test_parse_date_rejects_text_beyond_yyyy_mm_dd(bad):
+    assert parse_date(bad) is None
+
+
+def test_price_date_with_trailing_garbage_is_blocking():
+    df = price_frame([["M-1", "材料", "pcs", "TWD", 12, "2026-12-01錯誤"]])
+    assert [(i.row, i.column) for i in errors(validate_price_increase(df))] == [(2, "生效日")]
 
 
 # ---------- sample and fixture files ----------

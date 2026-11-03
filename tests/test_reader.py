@@ -185,3 +185,30 @@ def test_duplicate_required_header_is_blocking():
     result = read_bom(buf)
     assert result.data is None
     assert any("重複" in i.reason and i.column == "子件料號" for i in result.issues)
+
+
+def test_duplicate_optional_extension_headers_are_blocking():
+    header = BOM_REQUIRED_COLUMNS + ["供應商代碼", "工廠代碼", "供應商代碼", "工廠代碼"]
+    buf = make_workbook("BOM", header, [BOM_ROW + ["V-001", "TW01", "V-002", "TW02"]])
+    result = read_bom(buf)
+    assert result.data is None
+    assert has_blocking(result.issues)
+    dup = {i.column: i for i in result.issues}
+    assert set(dup) == {"供應商代碼", "工廠代碼"}
+    for name, issue in dup.items():
+        assert issue.sheet == "BOM"
+        assert issue.row == 1
+        assert "重複" in issue.reason and name in issue.reason
+
+
+def test_duplicate_price_extension_header_is_blocking():
+    from core.validation import PRICE_REQUIRED_COLUMNS as cols
+
+    buf = make_workbook(
+        "PriceIncrease",
+        cols + ["計價數量", "計價數量"],
+        [["M-1", "材料", "pcs", "TWD", 10, "2026-12-01", 1, 100]],
+    )
+    result = read_price_increase(buf)
+    assert result.data is None
+    assert [(i.sheet, i.row, i.column) for i in result.issues] == [("PriceIncrease", 1, "計價數量")]
