@@ -109,12 +109,23 @@ def _rollback(con):
         con.execute("ROLLBACK")
 
 
+def _connect_read_only(path) -> sqlite3.Connection:
+    """Open an existing SQLite file strictly read-only.
+
+    The path is turned into a URI by pathlib (Path.as_uri), which percent-encodes
+    '#', '?', '%', spaces and non-ASCII characters on Windows and POSIX. Building
+    "file:{path}?mode=ro" by hand lets '#'/'?' cut the path short and drops
+    mode=ro, so SQLite could create or open a different file (fixed in PR #39).
+    """
+    return sqlite3.connect(Path(path).resolve().as_uri() + "?mode=ro", uri=True)
+
+
 def check_integrity(path) -> dict:
     path = Path(path)
     if not path.exists():
         return {"ok": False, "schema_version": None, "message": "檔案不存在"}
     try:
-        con = sqlite3.connect(f"file:{path}?mode=ro", uri=True)
+        con = _connect_read_only(path)
         try:
             result = con.execute("PRAGMA integrity_check").fetchone()[0]
             row = con.execute("SELECT value FROM meta WHERE key = 'schema_version'").fetchone()
@@ -356,10 +367,17 @@ class CaseStore:
             raise StoreError("還原會覆蓋目前的資料庫，請明確確認後再執行")
         stamp = dt.datetime.now().strftime("%Y%m%d%H%M%S%f")
         previous = self.backup(self.path.with_name(f"{self.path.stem}.before_restore_{stamp}{self.path.suffix}"))
-        src, dst = sqlite3.connect(f"file:{Path(backup_path)}?mode=ro", uri=True), self._connect()
         try:
-            src.backup(dst)
-        finally:
-            dst.close()
-            src.close()
+            src = _connect_read_only(backup_path)
+            try:
+                dst = self._connect()
+                try:
+                    src.backup(dst)
+                finally:
+                    dst.close()
+            finally:
+                src.close()
+        except sqlite3.Error as exc:
+            raise StoreError(f"還原失敗（備份檔可能已移除或無法讀取）。還原前的資料已另存為 {previous.name}，"
+                             f"可用它還原回原狀：{exc}") from exc
         return previous
