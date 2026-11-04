@@ -20,7 +20,7 @@ def run(fn, *args):
     script = (f"const c = require({json.dumps(str(JS))});"
               f"try {{ console.log(JSON.stringify({{ok: c.{fn}(...{json.dumps(list(args))})}})); }}"
               f"catch (e) {{ console.log(JSON.stringify({{error: e.message}})); }}")
-    out = subprocess.run([node, "-e", script], capture_output=True, text=True, check=True).stdout
+    out = subprocess.run([node, "-e", script], capture_output=True, text=True, encoding="utf-8", check=True).stdout
     return json.loads(out)
 
 

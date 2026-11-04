@@ -38,7 +38,11 @@
 | #34 | 成交與實際成本回饋、差異分析（`core/quote_feedback.py`） | 已合併（`9c5712c`） |
 | #35 | 案件工作台頁面（`pages/4_案件工作台.py`）與 6 張工作表的內部稽核報告（`core/case_report.py`） | 已合併（`6dc954d`） |
 | #36 | 企業內部版 Release Candidate 驗收（`docs/ENTERPRISE_RC_REPORT.md`、RC 測試、文件更新） | 已合併（main `d3801c8e83644c67899646a2400fd53310139048`） |
-| #37 | 部署可重現性：`requirements-lock.txt`、`docs/LOCAL_DEPLOYMENT.md`、資料庫開啟／備份／磁碟已滿的錯誤處理修正、預設只綁定 127.0.0.1 | 進行中（分支 `claude/deploy-repro`） |
+| #37 | 部署可重現性：`requirements-lock.txt`、`docs/LOCAL_DEPLOYMENT.md`、資料庫開啟／備份／磁碟已滿的錯誤處理修正、預設只綁定 127.0.0.1 | 已合併（main `b9991036cc6c73c7eaae466f116ef055a22fcafe`） |
+| #38 | Windows／macOS GitHub-hosted runner 的鎖定安裝與完整 pytest（`test-cross-os`）；四視角審查 `docs/FINAL_QUALITY_REVIEW.md` | 進行中（分支 `claude/cross-os-ci`） |
+| #39 | 資料安全與災難復原深度驗收（先修復路徑含 `#`／`?` 時無法還原的缺陷） | 未開始 |
+| #40 | 首次安裝與使用者交付體驗 | 未開始 |
+| #41 | 最終交付閘門 | 未開始 |
 
 技術 MVP 已完成，以合成資料驗收。交付閘門見 `docs/RELEASE_GATE.md`。
 
@@ -48,7 +52,7 @@
 - 操作人欄位是「人工填寫（未經身分驗證）」，不是電子簽核；稽核紀錄無法證明未被竄改。
 - 案件資料保存預設關閉；資料庫只能放本機磁碟，不可放網路共享或雲端同步資料夾。
 - SQLite 檔案**沒有加密**，需使用 BitLocker／FileVault；備份需手動建立，沒有排程或異地備份。
-- 只用合成資料驗證；**尚未**通過真實 ERP 資料或客戶實際使用驗收；Windows／macOS 安裝步驟尚未實機驗證。
+- 只用合成資料驗證；**尚未**通過真實 ERP 資料或客戶實際使用驗收。Windows／macOS 只在 GitHub-hosted runner 驗證過安裝與完整測試（PR #38），**尚未**在客戶實機或 Docker Desktop 驗證。
 - 只能在本機或私有內網使用，不可開放公開網路；不呼叫外部 API。
 - 安裝必須使用 `requirements-lock.txt`；升級套件需另開 PR 並重新驗收。部署與復原步驟見 `docs/LOCAL_DEPLOYMENT.md`。
 
@@ -119,5 +123,5 @@ streamlit run app.py --server.address=127.0.0.1
 
 - 雲端開發環境的 Docker build：先啟動 `dockerd`，再執行
   `docker buildx build --network host --secret id=corp_ca,src=/root/.ccr/ca-bundle.crt -t spi --load .`
-- 額度：使用者回報剩餘 US$86（2026-11-04 PR #11 開始時）、US$75（PR #16 開始時）；US$64（PR #21 開始時）；US$35（PR #32 開始時）；PR #37 開始時未提供；各階段實際花費未知。session 內無法讀取實際用量，所以各階段實際花費未知。
+- 額度：使用者回報剩餘 US$86（2026-11-04 PR #11 開始時）、US$75（PR #16 開始時）；US$64（PR #21 開始時）；US$35（PR #32 開始時）；PR #37 開始時未提供；US$24（PR #38 開始時，使用者回報）；各階段實際花費未知。session 內無法讀取實際用量，所以各階段實際花費未知。
 - `gh` CLI 只能用於搜尋；PR 操作請使用 GitHub MCP 工具。

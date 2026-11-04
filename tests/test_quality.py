@@ -57,6 +57,9 @@ def test_benchmark_smoke_run_is_consistent():
     assert result["products"] == result["complete_products"] == 30
     assert result["exceptions"] == 0 and result["quotes"] == 30
     assert set(result["seconds"]) == {"read", "match", "calculate", "quote_risk", "export"}
+    # Peak memory is measured on Linux, macOS and Windows (stdlib only); a Python process
+    # that has loaded pandas uses tens of MB, never less than 1 MB or more than 64 GB.
+    assert 1 < result["peak_rss_mb"] < 65536
 
 
 def test_report_generation_shows_a_progress_indicator():

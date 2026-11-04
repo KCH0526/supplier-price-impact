@@ -11,3 +11,7 @@ result.xlsx
 case_backups/
 *.db-journal
 case_data/
+pytest-junit.xml
+pytest.log
+pip-install.log
+pip-freeze.txt
