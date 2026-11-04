@@ -51,7 +51,7 @@ def test_demo_documents_exist_and_state_synthetic_data():
 
 def test_no_unverified_commercial_claims():
     forbidden = ["已成交", "客戶見證", "官方認證", "已獲認證", "保證獲利", "市場唯一", "沒有競爭"]
-    for name in DOCS + ["../README.md"]:
+    for name in DOCS + ["../README.md", "USER_GUIDE.md"]:
         text = (ROOT / "docs" / name).read_text(encoding="utf-8")
         for word in forbidden:
             for m in re.finditer(word, text):
@@ -60,7 +60,7 @@ def test_no_unverified_commercial_claims():
 
 
 def test_referenced_images_exist():
-    for name in DOCS + ["../README.md"]:
+    for name in DOCS + ["../README.md", "USER_GUIDE.md"]:
         text = (ROOT / "docs" / name).read_text(encoding="utf-8")
         for target in re.findall(r"!\[[^\]]*\]\(([^)]+)\)", text):
             assert ((ROOT / "docs" / name).parent / target).resolve().exists(), (name, target)
@@ -81,19 +81,20 @@ def test_quote_recommendation_example_equals_a_fresh_run():
     assert rec["覆核狀態"] == "歷史價格低於安全底線" and rec["安全底價"] == 1026.12
 
 
-def test_readme_covers_quote_memory_topics():
-    text = (ROOT / "README.md").read_text(encoding="utf-8")
+def test_user_guide_covers_quote_memory_topics():
+    # The detailed manual moved from README.md to docs/USER_GUIDE.md (PR #41); same topics.
+    text = (ROOT / "docs" / "USER_GUIDE.md").read_text(encoding="utf-8")
     for topic in ("一句話", "系統主要優勢", "輔助分析，不取代 ERP", "歷史報價 Excel 的用途", "歷史報價匯入操作",
                   "相似案件查詢", "報價風險解讀", "Historical Evidence", "導入流程", "人工導入服務",
                   "商業化現況與未經驗證事項", "僅供內部試算，需人工核准", "沒有**使用 AI"):
         assert topic in text, topic
 
 
-def test_readme_covers_workbench_topics():
-    text = (ROOT / "README.md").read_text(encoding="utf-8")
+def test_user_guide_covers_workbench_topics():
+    text = (ROOT / "docs" / "USER_GUIDE.md").read_text(encoding="utf-8")
     for topic in ("報價工作台：解決的問題", "兩種成本模式與批次成本計算", "如何閱讀數量階梯", "如何比較報價版本",
                   "如何產生客戶報價草稿", "內部覆核報告與客戶草稿的差異", "空白代表未知", "412.50",
-                  "docs/images/07_workbench_tiers.png", "尚未完成的驗證"):
+                  "images/07_workbench_tiers.png", "尚未完成的驗證"):
         assert topic in text, topic
 
 
@@ -102,3 +103,30 @@ def test_standardized_history_demo_equals_a_fresh_build():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     assert _values(DEMO / "historical_quotes_standardized_demo.xlsx") == _values(module.build_standardized_history())
+
+
+def test_readme_is_a_product_document():
+    """PR #41: README introduces the product; development history lives in docs/WORK_LOG.md."""
+    text = (ROOT / "README.md").read_text(encoding="utf-8")
+    for must in ("# Supplier Price Impact", "企業成本與報價決策系統", "不會自動決定最終報價",
+                 "模組 A：成本影響分析", "模組 B：毛利風險管理", "模組 C：歷史報價管理", "模組 D：報價決策工作台",
+                 "模組 E：RFQ 案件管理", "模組 F：實際成本與資料管理", "start_windows.bat", "start_macos.command",
+                 "docker compose up --build", "requirements-lock.txt", "備份", "還原", "docs/USER_GUIDE.md",
+                 "不支援多人同時使用", "沒有加密", "未取得任何 ERP 廠商的認證"):
+        assert must in text, must
+    for forbidden in ("技術 MVP", "Claude", "PR #", "passed", "雲端額度", "示範程式", "沒有任何客戶",
+                      "已有企業導入", "支援多使用者", "保證"):
+        assert forbidden not in text, forbidden
+
+
+def test_all_markdown_links_resolve():
+    """Every relative link in README.md and docs/**/*.md points to an existing file."""
+    broken = []
+    for path in [ROOT / "README.md", *sorted((ROOT / "docs").rglob("*.md"))]:
+        text = path.read_text(encoding="utf-8")
+        for target in re.findall(r"\]\(([^)\s]+)\)", text):
+            if target.startswith(("http://", "https://", "mailto:", "#")):
+                continue
+            if not (path.parent / target.split("#")[0]).resolve().exists():
+                broken.append(f"{path.relative_to(ROOT)} -> {target}")
+    assert broken == []
