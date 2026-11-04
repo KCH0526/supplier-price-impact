@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>安裝與使用方式｜Python 或 Docker 在本機執行</title>
+  <meta name="description" content="企業私有版的安裝步驟：Python 3.11 或 Docker，只在本機或公司內網執行，並附上第一次使用的操作順序。">
+  <link rel="canonical" href="https://example.com/install.html">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要內容</a>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="index.html">製造業報價毛利覆核工具</a>
+      <nav aria-label="主要選單">
+        <ul>
+        <li><a href="index.html">首頁</a></li>
+        <li><a href="features.html">功能</a></li>
+        <li><a href="industries.html">適用產業</a></li>
+        <li><a href="tools/index.html">免費工具</a></li>
+        <li><a href="demo/index.html">合成資料示範</a></li>
+        <li><a href="articles/index.html">教學</a></li>
+        <li><a href="enterprise.html">企業版</a></li>
+        <li><a href="faq.html">常見問題</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main id="main" class="wrap">
+<h1>安裝與使用方式（企業私有版）</h1>
+<p class="notice">企業私有版只應在本機或公司內網執行。請勿將它部署到公開網路。</p>
+
+<h2>方式一：Python 3.11</h2>
+<ol>
+  <li>安裝 Python 3.11 以上版本。</li>
+  <li>取得程式後，在程式資料夾建立虛擬環境：<span class="formula">python3.11 -m venv .venv</span></li>
+  <li>安裝套件：<span class="formula">python -m pip install -r requirements.txt</span></li>
+  <li>啟動：<span class="formula">streamlit run app.py --server.address=127.0.0.1</span></li>
+  <li>瀏覽器開啟 <span class="formula">http://127.0.0.1:8501</span>。</li>
+</ol>
+
+<h2>方式二：Docker</h2>
+<ol>
+  <li>安裝 Docker Desktop 或 Docker Engine。</li>
+  <li>在程式資料夾執行：<span class="formula">docker compose up --build</span></li>
+  <li>瀏覽器開啟 <span class="formula">http://127.0.0.1:8501</span>。服務只綁定本機，並以非管理員帳號執行。</li>
+</ol>
+
+<h2>第一次使用的順序</h2>
+<ol>
+  <li>先用程式附的合成範例檔操作一次，確認數字和說明文件一致。</li>
+  <li>選擇報告類型：成本影響報告，或客戶報價風險報告。</li>
+  <li>上傳公司的 Excel；欄位名稱不同時，先用「Excel 欄位對應」頁轉換。</li>
+  <li>設定試算日與毛利目標，產生報告並下載。</li>
+  <li>由主管人工覆核後，再決定正式售價。</li>
+</ol>
+<p>Windows 與 macOS 的 Docker Desktop 尚未經過實機驗證，導入時會一併確認。</p>
+
+  </main>
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>本網站的示範資料全部是合成資料；試算結果僅供參考，不是正式報價，也不代表任何企業的真實成本。</p>
+      <p><a href="privacy.html">隱私與安全說明</a>　<a href="contact.html">聯絡與試用申請</a>　<a href="install.html">安裝與使用方式</a></p>
+    </div>
+  </footer>
+</body>
+</html>
