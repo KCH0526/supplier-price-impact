@@ -1,0 +1,56 @@
+<h1>免費報價試算工具</h1>
+<p class="notice">這些工具<strong>全部在您的瀏覽器內計算</strong>，輸入的數字不會傳送到任何伺服器、廣告或分析服務，也不會儲存。結果僅供試算，不是正式報價。</p>
+<p>金額計算不使用浮點數；顯示金額「四捨五入」到小數兩位，<strong>最低售價一律「無條件進位」</strong>到小數兩位，避免因四捨五入而低於毛利目標。</p>
+
+<section class="tool" aria-labelledby="t1">
+  <h2 id="t1">1. 成本增加百分比</h2>
+  <p>供應商漲價後，單件成本增加多少？公式：<span class="formula">(新成本 − 原成本) ÷ 原成本 × 100%</span></p>
+  <div class="fields">
+    <div><label for="ci-old">原成本（元）</label><input type="text" id="ci-old" inputmode="decimal" value="836.60"></div>
+    <div><label for="ci-new">新成本（元）</label><input type="text" id="ci-new" inputmode="decimal" value="872.20"></div>
+  </div>
+  <p><button class="btn" type="button" data-tool="cost">計算</button></p>
+  <div class="result" id="ci-result" aria-live="polite"></div>
+</section>
+
+<section class="tool" aria-labelledby="t2">
+  <h2 id="t2">2. 毛利率與加價率換算</h2>
+  <p>毛利率以<strong>售價</strong>為分母，加價率以<strong>成本</strong>為分母。詳見<a href="{{ROOT}}articles/margin-vs-markup.html">教學</a>。</p>
+  <div class="fields">
+    <div><label for="mm-cost">單件成本（元）</label><input type="text" id="mm-cost" inputmode="decimal" value="872.20"></div>
+    <div><label for="mm-price">未稅售價（元）</label><input type="text" id="mm-price" inputmode="decimal" value="1000"></div>
+    <div><label for="mm-margin">或輸入毛利率（%）換算加價率</label><input type="text" id="mm-margin" inputmode="decimal" value="20"></div>
+    <div><label for="mm-markup">或輸入加價率（%）換算毛利率</label><input type="text" id="mm-markup" inputmode="decimal" value="25"></div>
+  </div>
+  <p><button class="btn" type="button" data-tool="margin">計算</button></p>
+  <div class="result" id="mm-result" aria-live="polite"></div>
+</section>
+
+<section class="tool" aria-labelledby="t3">
+  <h2 id="t3">3. 批次固定費分攤</h2>
+  <p>開機、換線、治具等每批固定費，依數量攤到每一件：<span class="formula">每件成本 = 單件變動成本 + 每批固定費 ÷ 數量</span></p>
+  <div class="fields">
+    <div><label for="ba-var">單件變動成本（元）</label><input type="text" id="ba-var" inputmode="decimal" value="180"></div>
+    <div><label for="ba-fixed">每批固定費（元）</label><input type="text" id="ba-fixed" inputmode="decimal" value="1500"></div>
+    <div><label for="ba-qty">數量（件）</label><input type="text" id="ba-qty" inputmode="numeric" value="10"></div>
+  </div>
+  <p><button class="btn" type="button" data-tool="batch">計算</button></p>
+  <div class="result" id="ba-result" aria-live="polite"></div>
+</section>
+
+<section class="tool" aria-labelledby="t4">
+  <h2 id="t4">4. 數量階梯最低售價</h2>
+  <p>不同數量、同樣毛利目標下，每件最低要報多少？<span class="formula">最低售價 = 每件成本 ÷ (1 − 目標毛利率)</span>，無條件進位到小數兩位。</p>
+  <div class="fields">
+    <div><label for="qt-var">單件變動成本（元）</label><input type="text" id="qt-var" inputmode="decimal" value="180"></div>
+    <div><label for="qt-fixed">每批固定費（元）</label><input type="text" id="qt-fixed" inputmode="decimal" value="1500"></div>
+    <div><label for="qt-margin">目標毛利率（%）</label><input type="text" id="qt-margin" inputmode="decimal" value="20"></div>
+    <div><label for="qt-qty">數量（以逗號分隔，最多 20 個）</label><input type="text" id="qt-qty" value="10, 100, 500"></div>
+    <div><label for="qt-moq">最低訂購量 MOQ（選填）</label><input type="text" id="qt-moq" inputmode="numeric" value=""></div>
+  </div>
+  <p><button class="btn" type="button" data-tool="tiers">計算</button></p>
+  <div class="result" id="qt-result" aria-live="polite"></div>
+  <p>這個工具沒有模擬數量對原料議價、良率、工時的影響；如需完整試算（含歷史報價、客戶草稿），請看<a href="{{ROOT}}demo/index.html">合成資料示範</a>或<a href="{{ROOT}}enterprise.html">企業版</a>。</p>
+</section>
+<script src="{{ROOT}}assets/calculators.js"></script>
+<script src="{{ROOT}}assets/tools.js"></script>

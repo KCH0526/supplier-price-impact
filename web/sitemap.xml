@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://example.com/</loc></url>
+  <url><loc>https://example.com/features.html</loc></url>
+  <url><loc>https://example.com/industries.html</loc></url>
+  <url><loc>https://example.com/tools/index.html</loc></url>
+  <url><loc>https://example.com/demo/index.html</loc></url>
+  <url><loc>https://example.com/enterprise.html</loc></url>
+  <url><loc>https://example.com/install.html</loc></url>
+  <url><loc>https://example.com/faq.html</loc></url>
+  <url><loc>https://example.com/privacy.html</loc></url>
+  <url><loc>https://example.com/contact.html</loc></url>
+  <url><loc>https://example.com/articles/index.html</loc></url>
+  <url><loc>https://example.com/articles/bom-price-increase.html</loc></url>
+  <url><loc>https://example.com/articles/margin-vs-markup.html</loc></url>
+  <url><loc>https://example.com/articles/batch-setup-cost.html</loc></url>
+  <url><loc>https://example.com/articles/moq-pricing.html</loc></url>
+  <url><loc>https://example.com/articles/historical-quotes.html</loc></url>
+  <url><loc>https://example.com/articles/erp-excel-cleanup.html</loc></url>
+</urlset>

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ERP 匯出 Excel 如何整理｜欄位、前導零、單位與日期</title>
+  <meta name="description" content="從 ERP 匯出 BOM、調價與報價資料時，常見的前導零遺失、單位不一致、日期格式問題與整理步驟。">
+  <link rel="canonical" href="https://example.com/articles/erp-excel-cleanup.html">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要內容</a>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="../index.html">製造業報價毛利覆核工具</a>
+      <nav aria-label="主要選單">
+        <ul>
+        <li><a href="../index.html">首頁</a></li>
+        <li><a href="../features.html">功能</a></li>
+        <li><a href="../industries.html">適用產業</a></li>
+        <li><a href="../tools/index.html">免費工具</a></li>
+        <li><a href="../demo/index.html">合成資料示範</a></li>
+        <li><a href="../articles/index.html">教學</a></li>
+        <li><a href="../enterprise.html">企業版</a></li>
+        <li><a href="../faq.html">常見問題</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main id="main" class="wrap">
+<h1>ERP 匯出 Excel 如何整理</h1>
+<p class="lead">從 ERP 匯出的 BOM、採購價與報價資料，常常不能直接計算。以下是最常遇到的五個問題與整理步驟。</p>
+
+<h2>五個常見問題</h2>
+<ol>
+  <li><strong>前導零消失</strong>：料號「000123」被 Excel 當成數字，變成「123」。</li>
+  <li><strong>單位不一致</strong>：BOM 用 kg，採購用 g；BOM 用 pcs，報價用「套」。</li>
+  <li><strong>日期是文字</strong>：「2026/12/1」「115.12.01」混在一起。</li>
+  <li><strong>用量的基準不同</strong>：有些 BOM 的用量是「每批 100 件」而不是每件。</li>
+  <li><strong>欄位名稱不同</strong>：同一個意思，有人叫「品號」、有人叫「料號」、有人叫「物料編號」。</li>
+</ol>
+
+<h2>整理步驟</h2>
+<ol>
+  <li><strong>匯出前</strong>：在 ERP 或 Excel 中把料號、客戶代碼、報價單號欄位設定成「文字」格式，再匯出。</li>
+  <li><strong>只匯出需要的範圍</strong>：一個工廠、受本次調價影響的成品、仍有效的報價，不需要整個資料庫。</li>
+  <li><strong>統一單位</strong>：需要換算的欄位，另外新增一欄計算，確認後「貼成值」，並記錄換算依據。</li>
+  <li><strong>統一日期</strong>：轉成 Excel 日期格式，或文字 YYYY-MM-DD。</li>
+  <li><strong>確認用量基準</strong>：每批用量要先除以批量，換成每件用量。</li>
+  <li><strong>欄位對應</strong>：建立一張「ERP 欄位 → 標準欄位」的對照表，保存下來，下次直接沿用。</li>
+</ol>
+
+<h2>例子：欄位對照表</h2>
+<div class="table-scroll"><table>
+  <thead><tr><th>ERP 匯出欄位</th><th>標準欄位</th><th>注意事項</th></tr></thead>
+  <tbody>
+    <tr><td>主件品號</td><td>成品編號</td><td>設為文字，保留前導零</td></tr>
+    <tr><td>元件品號</td><td>子件料號</td><td>設為文字</td></tr>
+    <tr><td>組成用量</td><td>用量</td><td>確認是每件，不是每批</td></tr>
+    <tr><td>標準進價</td><td>原單價</td><td>確認是標準成本、最近進價或移動平均</td></tr>
+    <tr><td>報價有效期限</td><td>截止日</td><td>轉成日期格式</td></tr>
+  </tbody>
+</table></div>
+
+<h2>整理完成後的檢查</h2>
+<ul>
+  <li>隨機抽 5 個料號，和 ERP 畫面比對用量與單價，確認沒有在匯出或整理時出錯。</li>
+  <li>篩選料號欄位，確認沒有變成科學記號（例如 1.23E+05），也沒有遺失前導零。</li>
+  <li>篩選單位欄位，確認同一個料號在 BOM 與採購資料中的單位一致。</li>
+  <li>檢查日期欄位是否都能排序；不能排序的通常是文字格式的日期。</li>
+  <li>確認沒有隱藏欄、隱藏工作表或註解，避免把不該外流的資料一起交出去。</li>
+</ul>
+<p>把整理步驟和欄位對照表保存成一份文件，下次匯出時照著做即可。第一次整理通常最花時間，之後每次調價只需要重複同樣的步驟，也比較不容易出錯。</p>
+<h2>去識別化</h2>
+<p>如果要把資料交給外部協助，先刪除客戶名稱、聯絡人、供應商名稱，客戶代碼改成代號，但單價、用量、成本不要改，否則驗算就沒有意義。對照表留在公司內部。</p>
+<p>企業私有版有「Excel 欄位對應」頁，可以逐欄指定對應並保存設定，詳見<a href="../install.html">安裝與使用方式</a>。</p>
+
+  </main>
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>本網站的示範資料全部是合成資料；試算結果僅供參考，不是正式報價，也不代表任何企業的真實成本。</p>
+      <p><a href="../privacy.html">隱私與安全說明</a>　<a href="../contact.html">聯絡與試用申請</a>　<a href="../install.html">安裝與使用方式</a></p>
+    </div>
+  </footer>
+</body>
+</html>

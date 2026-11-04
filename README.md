@@ -700,6 +700,29 @@ ERP 匯出檔的欄位名稱和本工具不同時，不必手動改 Excel：
 
 **尚未完成的驗證**：真實客戶資料、真人操作、付費意願。
 
+## 37. 公開網站（`web/`，尚未部署）
+
+`web/` 是純靜態的繁體中文網站，內容包括：
+- 產品介紹、適用產業、企業版說明、安裝方式、常見問題、隱私說明
+- 4 個免費試算工具
+- 6 篇報價實務教學
+
+**網站界線：**
+- **不接受任何 Excel 上傳**，沒有表單，也沒有任何外部資源、分析工具或廣告。
+- 試算工具在瀏覽器內以有理數計算，最低售價一律無條件進位，輸入的數字不會送出。
+- 頁面由 `web_src/build_site.py` 依 `web_src/content/` 的內容產生；部署前需把其中的 `BASE_URL`（目前是 `https://example.com/`）改成正式網域，再重新產生。
+
+本機預覽：
+
+```bash
+python web_src/build_site.py
+python -m http.server 8000 --bind 127.0.0.1 --directory web
+```
+
+然後開啟 `http://127.0.0.1:8000`。
+
+是否公開部署、使用哪個網域與託管平台，需要由你決定並授權（見 `docs/PUBLIC_LAUNCH_DECISION.md`）。
+
 ### 專案文件
 
 | 文件 | 內容 |
@@ -714,5 +737,6 @@ ERP 匯出檔的欄位名稱和本工具不同時，不必手動改 Excel：
 | [`docs/WORK_LOG.md`](docs/WORK_LOG.md) | 開發進度交接 |
 | [`docs/HISTORICAL_QUOTE_PRODUCT_SPEC.md`](docs/HISTORICAL_QUOTE_PRODUCT_SPEC.md) | 歷史報價記憶庫與建議報價規格、設計審查 |
 | [`docs/LIMITATIONS.md`](docs/LIMITATIONS.md) | 實際限制清單 |
+| [`docs/PUBLIC_LAUNCH_DECISION.md`](docs/PUBLIC_LAUNCH_DECISION.md) | 公開入口與商業化決策 |
 | [`docs/COMMERCIAL_QUOTING_SPEC.md`](docs/COMMERCIAL_QUOTING_SPEC.md) | 報價工作台規格與設計審查 |
 | [`docs/RELEASE_GATE.md`](docs/RELEASE_GATE.md) | 交付閘門：已驗證／僅測試／未驗證／商業待確認 |
