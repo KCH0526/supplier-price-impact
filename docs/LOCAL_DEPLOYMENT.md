@@ -8,7 +8,7 @@
 > 實測狀況（三種層級，請勿混為一談）：
 > 1. **開發環境 Linux 與 Docker**：Python 3.11.18 與 `python:3.11-slim` 已實際安裝，並完成完整測試與瀏覽器端對端驗收。
 > 2. **GitHub-hosted runner**（PR #38 起，每個 PR 自動執行）：Windows Server 2025 x64 與 macOS 26 arm64，Python 3.11.9、Node.js 22，以 `requirements-lock.txt` 安裝。567 passed、0 failed、0 skipped（見第 13 節）。這證明鎖定的套件可以安裝，且程式與測試可以跨作業系統執行。
-> 3. **客戶的實體電腦、Windows 10/11 桌機、Intel Mac、Docker Desktop**：**尚未在實機驗證**。runner 是乾淨的雲端虛擬機，沒有公司防毒、權限政策、中文使用者名稱、OneDrive 等真實環境因素。第一次安裝時，請照第 7 節做一次驗收並記錄結果。
+> 3. **客戶的實體電腦、Windows 10/11 桌機、Intel Mac、Docker Desktop**：**尚未在實機驗證**（`start_windows.bat`／`start_macos.command` 也只在 runner 驗證過「尚未安裝」的提示）。runner 是乾淨的雲端虛擬機，沒有公司防毒、權限政策、中文使用者名稱、OneDrive 等真實環境因素。第一次安裝時，請照第 7 節做一次驗收並記錄結果。
 
 ## 1. 安裝前準備
 - Python **3.11**（3.11.x 皆可；其他版本未驗收）。
@@ -18,36 +18,47 @@
   `requirements.txt` 只列出直接依賴，不建議單獨使用。
 
 ## 2. Windows 安裝
-在 PowerShell 中執行（以 `C:\報價工具` 為例）：
+**第一次安裝**（只做一次）。在專案資料夾的空白處按住 Shift 並按右鍵，選「在終端機中開啟」或「在此處開啟 PowerShell 視窗」，然後逐行執行：
 
 ```powershell
 py -3.11 --version
-cd C:\報價工具\supplier-price-impact
 py -3.11 -m venv .venv
-.venv\Scripts\Activate.ps1
-python -m pip install -r requirements-lock.txt
-python -m pytest -q -rs
-streamlit run app.py
+.venv\Scripts\python.exe -m pip install -r requirements-lock.txt
+.venv\Scripts\python.exe tools\check_env.py --data-dir "$env:USERPROFILE\Documents\報價資料"
 ```
 
-- 若出現「因為這個系統上已停用指令碼執行」：執行 `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` 後重開 PowerShell，或改用 `.venv\Scripts\activate.bat`（命令提示字元）。
-- `pytest` 必須是 0 failed、0 skipped 才算安裝成功。
-- 瀏覽器開啟 `http://127.0.0.1:8501`。Windows 防火牆若詢問是否允許連線，請選「取消」或只允許「私人網路」；本系統不需要讓其他電腦連入。
+- 全程**直接執行 `.venv\Scripts\python.exe`**，不需要「啟用」虛擬環境，也**不需要修改 PowerShell 執行原則或任何系統安全設定**。
+- `py -3.11 --version` 出現「找不到」或版本不是 3.11.x：請從 python.org 安裝 Python 3.11（安裝畫面勾選「Add python.exe to PATH」），關閉並重新開啟視窗後再試。
+- 安裝路徑可以有中文或空白（例如 `C:\Users\王小明\報價 工具`）。在指令中手動輸入這種路徑時，請用英文雙**引號**括起來，例如 `cd "C:\Users\王小明\報價 工具"`。
+- 想確認安裝完整，可再執行 `.venv\Scripts\python.exe -m pytest -q -rs`；結果必須是 0 failed、0 skipped（約需 1 分鐘）。
+
+**日常啟動與再次啟動**：在檔案總管中雙擊 `start_windows.bat`。它會先執行環境檢查，再啟動系統，並在視窗中顯示要開啟的網址。
+- 要關閉程式：在該視窗按 Ctrl+C，或直接關閉視窗。之後想**再次啟動**，再雙擊 `start_windows.bat` 即可。資料庫與備份都不會因為關閉程式而消失。
+- Windows 若出現「Windows 已保護您的電腦」：這是因為檔案從網路下載。按「其他資訊 → 仍要執行」只會允許這一個檔案，不會改變系統設定。如果公司政策不允許，請改用上面的指令方式，最後一行改成 `.venv\Scripts\python.exe -m streamlit run app.py`。
+- Windows 防火牆若詢問是否允許連線，請選「取消」；本系統只供本機使用，不需要讓其他電腦連入。
 
 ## 3. macOS 安裝
-在「終端機」中執行（Python 3.11 可由 python.org 安裝程式或 Homebrew `brew install python@3.11` 取得）：
+**第一次安裝**（只做一次）。在 Finder 中對專案資料夾按右鍵 →「服務」→「新增位於檔案夾位置的終端機視窗」，然後逐行執行：
 
 ```bash
 python3.11 --version
-cd ~/報價工具/supplier-price-impact
 python3.11 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements-lock.txt
-python -m pytest -q -rs
-streamlit run app.py
+.venv/bin/python -m pip install -r requirements-lock.txt
+.venv/bin/python tools/check_env.py --data-dir "$HOME/報價資料"
 ```
 
-瀏覽器開啟 `http://127.0.0.1:8501`。macOS 若詢問是否允許「Python」接受連入連線，請選「拒絕」。
+- `python3.11: command not found`：請從 python.org 下載 Python 3.11 的 macOS 安裝程式，安裝後重新開啟終端機再試。
+- 路徑含中文或空白時，請用雙**引號**括起來，例如 `cd "$HOME/報價 工具"`。
+- 可再執行 `.venv/bin/python -m pytest -q -rs` 確認：0 failed、0 skipped。
+
+**日常啟動與再次啟動**：在 Finder 中雙擊 `start_macos.command`。第一次若出現「無法打開，因為無法驗證開發者」，請按右鍵 →「打開」→「打開」；這只允許這一個檔案，不會改變系統設定。
+- 要關閉程式：在終端機視窗按 Control+C，再關閉視窗。之後想**再次啟動**，再雙擊 `start_macos.command` 即可。
+- macOS 若詢問是否允許「Python」接受連入連線，請選「拒絕」。
+
+### 連接埠 8501 已被使用
+- 如果已經有一個本系統（或其他程式）在用 8501，環境檢查會提醒，Streamlit 也會**自動改用 8502** 或下一個可用的連接埠。
+- 請以啟動視窗中顯示的 `Local URL` 為準，不要直接開舊的書籤。
+- 通常的原因是前一次啟動的視窗還沒關閉，關閉它即可。
 
 ## 4. Docker 啟動
 Docker 映像同樣以 `requirements-lock.txt` 安裝，並以非 root 使用者（uid 10001）執行。
@@ -131,7 +142,7 @@ docker run -d --name spi -p 127.0.0.1:8501:8501 -v /path/to/case_data:/data supp
 | 備份損毀 | 「備份檔檢查：不是可用的案件資料庫」或「完整性檢查失敗」；還原時「備份檔無法使用」 | 備份在傳輸中損壞、外接硬碟故障、檔案不是本系統的備份 | 系統拒絕還原，目前資料不受影響。改用前一份備份；定期以第 9 節第 1 步檢查備份是否「完整」 |
 | 還原中途失敗 | 「還原失敗（備份檔可能已移除或無法讀取）。還原前的資料已另存為 …」 | 備份檔在檢查後被移除、隨身碟被拔除、權限變更 | 先確認目前資料（在案件工作台查看案件）；若有疑慮，用畫面指出的 `before_restore` 檔還原回原狀，再把備份檔放回可讀取的位置重做 |
 | 儲存空間不足 | 寫入時「寫入失敗，已復原（rollback）：database or disk is full」；備份時「無法建立備份（請確認資料夾權限與剩餘空間）」 | 磁碟已滿 | 該次寫入已整筆回滾，不會留下一半的資料；失敗的備份不會留下不完整的檔案。清出空間（刪除舊的 `before_restore` 檔與過期備份前，先確認已有其他完整備份）後重做 |
-| 權限不足 | 「無法開啟資料庫 …」或「無法建立備份 …」 | 資料夾不可寫入；Docker 掛載資料夾未給 uid 10001 寫入權限 | 確認該帳號對資料夾有讀寫權限（第 6 節）；Docker 見第 4 節 `chown` |
+| 權限不足 | 「無法開啟資料庫 …」或「無法建立備份 …」 | 資料夾不可寫入（例如放在 `C:\Program Files` 底下）；Docker 掛載資料夾未給 uid 10001 寫入權限 | 改用自己帳號的資料夾（例如 `文件\報價資料`），並先用 `tools/check_env.py --data-dir <資料夾>` 確認可寫入；**不要**用系統管理員身分執行。Docker 見第 4 節 `chown` |
 | 安裝套件失敗 | `pip install` 出現 `CERTIFICATE_VERIFY_FAILED`、`No matching distribution found` 或連線逾時 | 公司 SSL 檢查 proxy、Python 不是 3.11、無法連到 PyPI | SSL：向 IT 取得公司 CA，`python -m pip install --cert <CA檔> -r requirements-lock.txt`（Docker 見 `docs/DEPLOYMENT_CHECKLIST.md` 的 build secret）。版本：確認 `python --version` 為 3.11.x。不要改用 `requirements.txt` 的其他版本或移除版本固定 |
 | 系統版本不相容 | 「資料庫版本 N 比程式支援的 M 新，請更新程式後再開啟」；或「備份檔版本 … 與程式版本 … 不同」 | 用舊版程式開啟新版建立／升級過的資料庫或備份 | 改用對應的新版程式；或依第 10 節第 7 步，以舊版產生的「更新前」備份還原到新路徑 |
 | Python 版本不相容 | 安裝或執行時出現語法錯誤、套件找不到對應版本 | 不是 Python 3.11 | 安裝 Python 3.11，重新建立 `.venv` |

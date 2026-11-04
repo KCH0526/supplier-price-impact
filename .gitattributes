@@ -1,0 +1,3 @@
+# Launchers must keep the line endings of their OS (PR #40).
+*.bat text eol=crlf
+*.command text eol=lf
