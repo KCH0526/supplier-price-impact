@@ -41,10 +41,10 @@
 | #37 | 部署可重現性：`requirements-lock.txt`、`docs/LOCAL_DEPLOYMENT.md`、資料庫開啟／備份／磁碟已滿的錯誤處理修正、預設只綁定 127.0.0.1 | 已合併（main `b9991036cc6c73c7eaae466f116ef055a22fcafe`） |
 | #38 | Windows／macOS GitHub-hosted runner 的鎖定安裝與完整 pytest（`test-cross-os`）；四視角審查 `docs/FINAL_QUALITY_REVIEW.md` | 已合併（main `4de325d36b05bb3a774b07c05a92e424f0732c0a`） |
 | #39 | 修復 SQLite 路徑特殊字元缺陷（`#`／`?`／`%` 會讓唯讀檢查失效、有效備份無法還原，甚至以空白資料庫覆蓋資料）；完整生命週期備份還原逐筆比對（`tests/test_recovery_integrity.py`，詳見 `docs/LOCAL_DEPLOYMENT.md` 第 14 節） | 已合併（main `b8946d62199057a37159aa781514cb2702f4d8ef`） |
-| #40 | 首次安裝與交付：`start_windows.bat`／`start_macos.command`、`tools/check_env.py`、`docs/FIRST_USE_CHECKLIST.md`；安裝說明不再要求修改執行原則；案件工作台重複按保存不再產生重複紀錄 | 進行中（分支 `claude/first-use-handoff`） |
-| #41 | 最終交付閘門 | 未開始 |
+| #40 | 首次安裝與交付：`start_windows.bat`／`start_macos.command`、`tools/check_env.py`、`docs/FIRST_USE_CHECKLIST.md`；安裝說明不再要求修改執行原則；案件工作台重複按保存不再產生重複紀錄 | 已合併（main `36ab3a26d7e9cf5645c492831655862525e23491`） |
+| #41 | 產品文件與專案整理：新 README（產品介紹、六大模組）、原 README 搬到 `docs/USER_GUIDE.md`、`docs/REPOSITORY_INVENTORY.md`、`docs/FINAL_DELIVERY_REPORT.md`、Markdown 連結檢查 | 進行中（分支 `claude/final-docs`） |
 
-技術 MVP 已完成，以合成資料驗收。交付閘門見 `docs/RELEASE_GATE.md`。
+單機企業版的功能與文件已完成，以合成資料驗收。交付證據見 `docs/FINAL_DELIVERY_REPORT.md` 與 `docs/RELEASE_GATE.md`。
 
 ### 企業內部版 Release Candidate 的使用限制（PR #32～#37）
 
@@ -123,5 +123,5 @@ streamlit run app.py --server.address=127.0.0.1
 
 - 雲端開發環境的 Docker build：先啟動 `dockerd`，再執行
   `docker buildx build --network host --secret id=corp_ca,src=/root/.ccr/ca-bundle.crt -t spi --load .`
-- 額度：使用者回報剩餘 US$86（2026-11-04 PR #11 開始時）、US$75（PR #16 開始時）；US$64（PR #21 開始時）；US$35（PR #32 開始時）；PR #37 開始時未提供；US$24（PR #38 開始時，使用者回報）；US$20（PR #39 開始時，使用者回報）；US$16（PR #40 開始時，使用者回報）；各階段實際花費未知。session 內無法讀取實際用量，所以各階段實際花費未知。
+- 額度：使用者回報剩餘 US$86（2026-11-04 PR #11 開始時）、US$75（PR #16 開始時）；US$64（PR #21 開始時）；US$35（PR #32 開始時）；PR #37 開始時未提供；US$24（PR #38 開始時，使用者回報）；US$20（PR #39 開始時，使用者回報）；US$16（PR #40 開始時，使用者回報）；US$13（PR #41 開始時，使用者回報）；各階段實際花費未知。session 內無法讀取實際用量，所以各階段實際花費未知。
 - `gh` CLI 只能用於搜尋；PR 操作請使用 GitHub MCP 工具。

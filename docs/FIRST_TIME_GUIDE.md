@@ -38,7 +38,7 @@
 
 ## 步驟 4：下載 Excel 報告
 
-按「下載可稽核 Excel 報告」，取得 `result.xlsx`。內容範例見 `demo/example_result.xlsx`。各工作表的說明見 README 第 10 節。
+按「下載可稽核 Excel 報告」，取得 `result.xlsx`。內容範例見 `demo/example_result.xlsx`。各工作表的說明見 使用手冊（`docs/USER_GUIDE.md`）第 10 節。
 
 ## 欄位名稱不一樣時：Excel 欄位對應
 
@@ -69,12 +69,12 @@
 
 ## 報價工作台與案件工作台
 
-- 報價工作台（批次成本、數量階梯、版本比較、客戶草稿）：README 第 30～36 節；練習步驟見 `docs/FIRST_USE_CHECKLIST.md` 第 5 節。
-- 案件工作台（RFQ、案件狀態、實際成本、備份還原）：README 第 38 節；練習步驟見 `docs/FIRST_USE_CHECKLIST.md` 第 6 節。
+- 報價工作台（批次成本、數量階梯、版本比較、客戶草稿）：使用手冊（`docs/USER_GUIDE.md`）第 30～36 節；練習步驟見 `docs/FIRST_USE_CHECKLIST.md` 第 5 節。
+- 案件工作台（RFQ、案件狀態、實際成本、備份還原）：使用手冊（`docs/USER_GUIDE.md`）第 38 節；練習步驟見 `docs/FIRST_USE_CHECKLIST.md` 第 6 節。
 
 ## 看到錯誤時
 
-請照 README 第 15 節「常見錯誤」處理；安裝、資料庫、備份或連接埠的問題見 `docs/LOCAL_DEPLOYMENT.md` 第 11 節。每一個例外都會寫出工作表、Excel 列號與原因，修正原始 Excel 後重新上傳即可。
+請照 使用手冊（`docs/USER_GUIDE.md`）第 15 節「常見錯誤」處理；安裝、資料庫、備份或連接埠的問題見 `docs/LOCAL_DEPLOYMENT.md` 第 11 節。每一個例外都會寫出工作表、Excel 列號與原因，修正原始 Excel 後重新上傳即可。
 
 ## 操作影片
 

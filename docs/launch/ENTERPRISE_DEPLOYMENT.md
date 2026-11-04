@@ -14,7 +14,7 @@
 - 公司網路有 SSL 檢查 proxy 時：`docker build --secret id=corp_ca,src=公司CA.crt .`
 
 ## 驗收
-1. 先用 `samples/` 的合成資料跑一次，結果與 README 一致。
+1. 先用 `samples/` 的合成資料跑一次，結果與使用手冊（`docs/USER_GUIDE.md`）第 9 節一致。
 2. 再依 `../delivery/` 的流程導入真實資料。
 
 Windows 與 macOS 的 Docker Desktop 尚未經過實機驗證，第一次導入時要一併確認。

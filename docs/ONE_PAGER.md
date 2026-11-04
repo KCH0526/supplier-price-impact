@@ -56,4 +56,4 @@
 
 ## 目前狀態
 
-以合成資料驗收的技術 MVP。尚未有真實客戶使用紀錄，服務價格也還在測試中（見 `SERVICE_SCOPE.md`）。
+功能以合成資料完成驗收，可在 Windows、macOS、Linux 與 Docker 上安裝執行；尚未有真實企業的導入紀錄，服務價格也還在評估中（見 `SERVICE_SCOPE.md`）。導入前的確認事項見 `FINAL_DELIVERY_REPORT.md` 第 F 節。
