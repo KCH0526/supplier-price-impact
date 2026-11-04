@@ -371,6 +371,7 @@ ERP 匯出檔的欄位名稱和本工具不同時，不必手動改 Excel：
 | [`docs/PRODUCT_DECISION.md`](docs/PRODUCT_DECISION.md) | 產品決策紀錄；分開列出已證實事實、推論與未驗證假設 |
 | [`docs/DEPLOYMENT_CHECKLIST.md`](docs/DEPLOYMENT_CHECKLIST.md) | 部署與實際驗收紀錄 |
 | [`docs/CUSTOMER_ONBOARDING.md`](docs/CUSTOMER_ONBOARDING.md) | 客戶導入與欄位對應流程 |
+| [`docs/delivery/README.md`](docs/delivery/README.md) | 客戶交付工具包：需求表、授權檢查、確認表、驗收表、服務範圍、FAQ、資料清除 |
 | [`docs/GO_TO_MARKET.md`](docs/GO_TO_MARKET.md) | 目標客戶、訪談題目、待測定價 |
 | [`docs/WORK_LOG.md`](docs/WORK_LOG.md) | 開發進度交接 |
 | [`docs/RELEASE_GATE.md`](docs/RELEASE_GATE.md) | 交付閘門：已驗證／僅測試／未驗證／商業待確認 |
