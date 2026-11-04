@@ -8,3 +8,7 @@ __pycache__
 .streamlit/secrets.toml
 result.xlsx
 docs/media
+*.db
+*.sqlite
+*.sqlite3
+case_backups/

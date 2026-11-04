@@ -5,3 +5,7 @@ __pycache__/
 .env
 .streamlit/secrets.toml
 result.xlsx
+*.db
+*.sqlite
+*.sqlite3
+case_backups/

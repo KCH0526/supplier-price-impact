@@ -32,7 +32,12 @@
 | #28 | 公開入口與商業化決策（`docs/PUBLIC_LAUNCH_DECISION.md`） | 已合併（main `6723618`） |
 | #29 | 公開繁體中文靜態網站（`web/`、`web_src/`）與 4 個瀏覽器內計算器 | 已合併（main `60faf9f`） |
 | #30 | 公開合成資料 Demo（`web_src/demo_content.py` 預先產生 `web/demo/`，無上傳） | 已合併（main `b05f699`） |
-| #31 | 商業化與上線驗收文件（`docs/launch/` 13 份） | 已提交 PR #31（合併後請補記 SHA） |
+| #31 | 商業化與上線驗收文件（`docs/launch/` 13 份） | 已合併（main `8434626`） |
+| #32 | 本機案件資料保存層（`core/case_store.py`）與路線圖（`docs/PRODUCTION_QUOTING_ROADMAP.md`） | 進行中（分支 `claude/local-case-store`） |
+| #33 | 客戶詢價 RFQ 匯入與案件狀態流程 | 未開始 |
+| #34 | 成交與實際成本回饋、差異分析 | 未開始 |
+| #35 | 案件工作台頁面與稽核報告 | 未開始 |
+| #36 | 候選版本驗收與文件 | 未開始 |
 
 技術 MVP 已完成，以合成資料驗收。交付閘門見 `docs/RELEASE_GATE.md`。商業驗證尚未開始（見 `docs/GO_TO_MARKET.md` 第 9 節）。
 
@@ -101,5 +106,5 @@ streamlit run app.py --server.address=127.0.0.1
 
 - 雲端開發環境的 Docker build：先啟動 `dockerd`，再執行
   `docker buildx build --network host --secret id=corp_ca,src=/root/.ccr/ca-bundle.crt -t spi --load .`
-- 額度：使用者回報剩餘 US$86（2026-11-04 PR #11 開始時）、US$75（PR #16 開始時）；US$64（PR #21 開始時）；各階段實際花費未知。session 內無法讀取實際用量，所以各階段實際花費未知。
+- 額度：使用者回報剩餘 US$86（2026-11-04 PR #11 開始時）、US$75（PR #16 開始時）；US$64（PR #21 開始時）；US$35（PR #32 開始時）；各階段實際花費未知。session 內無法讀取實際用量，所以各階段實際花費未知。
 - `gh` CLI 只能用於搜尋；PR 操作請使用 GitHub MCP 工具。
