@@ -18,7 +18,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install dependencies
-        run: python -m pip install -r requirements.txt
+        run: python -m pip install -r requirements-lock.txt
       - name: Run full test suite (Streamlit test must not be skipped)
         shell: bash
         run: |

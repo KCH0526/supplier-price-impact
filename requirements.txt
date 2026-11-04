@@ -1,4 +1,8 @@
-pandas>=2.0,<4.0
-openpyxl>=3.1,<4.0
-pytest>=7.0,<10.0
-streamlit>=1.60,<2.0
+# 直接依賴：程式碼直接 import 的套件，固定為已通過企業內部版 RC 驗收（PR #36）的版本。
+# 可重現安裝（含所有傳遞依賴）請使用 requirements-lock.txt：
+#   python -m pip install -r requirements-lock.txt
+# 不要為了「固定版本」而升級套件；升級必須另開 PR，並重新執行完整測試與驗收。
+pandas==3.1.0
+openpyxl==3.1.5
+streamlit==1.66.1
+pytest==9.2.0

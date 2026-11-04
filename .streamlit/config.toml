@@ -6,6 +6,9 @@ serverAddress = "localhost"
 
 [server]
 headless = true
+# Local use only by default. Docker overrides this with --server.address=0.0.0.0 inside the
+# container, and docker-compose publishes the port on 127.0.0.1 only.
+address = "127.0.0.1"
 # Upload limit in MB (Streamlit default is 200). Matches core.reader.MAX_FILE_BYTES.
 maxUploadSize = 20
 

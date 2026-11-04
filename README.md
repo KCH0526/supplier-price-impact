@@ -267,7 +267,7 @@ Quote Risk 的四種狀態：
 ```bash
 python3.11 -m venv .venv
 . .venv/bin/activate              # Windows PowerShell：.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
+python -m pip install -r requirements-lock.txt   # 固定版本，與驗收環境相同
 streamlit run app.py --server.address=127.0.0.1
 ```
 
@@ -282,6 +282,7 @@ docker compose up --build
 - 服務只發布在本機 `127.0.0.1`，並以非 root 使用者執行。
 - **不要**把 `docker-compose.yml` 的連接埠改成 `8501:8501`，否則同網段的人都能連線。
 - 更多細節見 [`docs/DEPLOYMENT_CHECKLIST.md`](docs/DEPLOYMENT_CHECKLIST.md)。
+- Windows／macOS 安裝、資料庫位置、備份還原、更新前備份與故障復原，見 [`docs/LOCAL_DEPLOYMENT.md`](docs/LOCAL_DEPLOYMENT.md)。
 
 ## 14. 測試
 

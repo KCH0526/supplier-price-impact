@@ -1,0 +1,50 @@
+# 可重現的完整安裝設定（Python 3.11）。
+# 版本取自通過企業內部版 RC 驗收（PR #36，main d3801c8）的環境：本機 venv 與 Docker 映像的 pip freeze 完全相同。
+# CI 與 Dockerfile 都使用本檔。更新方式見 docs/LOCAL_DEPLOYMENT.md 第 9 節。
+
+# ===== 直接依賴（與 requirements.txt 相同） =====
+pandas==3.1.0
+openpyxl==3.1.5
+streamlit==1.66.1
+pytest==9.2.0
+
+# ===== 傳遞依賴（由上列套件帶入；括號內為帶入者） =====
+altair==6.3.0                     # streamlit
+anyio==4.16.0                     # starlette
+attrs==26.1.0                     # referencing
+certifi==2026.10.23               # requests
+charset-normalizer==3.5.2         # requests
+click==8.5.0                      # streamlit、uvicorn
+et-xmlfile==2.0.0                 # openpyxl
+h11==0.16.0                       # uvicorn
+idna==3.20                        # anyio、requests
+iniconfig==2.3.1                  # pytest
+itsdangerous==2.2.0               # streamlit
+jinja2==3.1.6                     # altair、pydeck
+jsonschema==4.26.0                # altair
+jsonschema-specifications==2025.9.1  # jsonschema
+markupsafe==3.0.4                 # jinja2
+narwhals==2.28.0                  # altair
+numpy==2.4.6                      # pandas、pydeck、streamlit
+packaging==26.3                   # pytest、streamlit、altair
+pillow==13.0.0                    # streamlit
+pluggy==1.7.0                     # pytest
+protobuf==7.36.2                  # streamlit
+pyarrow==26.0.1                   # streamlit
+pydeck==0.9.3                     # streamlit
+pygments==2.21.0                  # pytest
+python-dateutil==4.0.0            # pandas
+python-multipart==0.0.33          # streamlit
+referencing==0.37.0               # jsonschema
+requests==2.34.2                  # streamlit
+rpds-py==2026.9.1                 # jsonschema、referencing
+starlette==1.10.0                 # streamlit
+typing-extensions==4.16.0         # altair、anyio、streamlit
+tzdata==2026.6                    # python-dateutil（Windows 上 pandas 也需要）
+urllib3==2.8.0                    # requests
+uvicorn==0.54.0                   # streamlit
+watchdog==6.0.0                   # streamlit
+websockets==17.4                  # streamlit
+
+# ===== 只在 Windows 需要的傳遞依賴（Linux／macOS 會自動略過；尚未在 Windows 實測） =====
+colorama==0.4.6 ; sys_platform == "win32"   # pytest

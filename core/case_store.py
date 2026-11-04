@@ -102,6 +102,13 @@ def _insert_event(con, case_id, entity, action, old, new, reason, source):
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", (case_id, entity, action, old, new, reason, ACTOR, source, _now()))
 
 
+def _rollback(con):
+    # SQLite already rolls back by itself on some errors (e.g. disk full); a second
+    # ROLLBACK would raise and hide the original error.
+    if con.in_transaction:
+        con.execute("ROLLBACK")
+
+
 def check_integrity(path) -> dict:
     path = Path(path)
     if not path.exists():
@@ -151,10 +158,10 @@ class CaseStore:
             con.execute("COMMIT")
             return result
         except StoreError:
-            con.execute("ROLLBACK")
+            _rollback(con)
             raise
         except sqlite3.Error as exc:
-            con.execute("ROLLBACK")
+            _rollback(con)
             raise StoreError(f"寫入失敗，已復原（rollback）：{exc}") from exc
         finally:
             con.close()
@@ -170,6 +177,15 @@ class CaseStore:
     # ---------- schema ----------
     def initialize(self):
         self._require()
+        try:
+            self._initialize()
+        except StoreError:
+            raise
+        except (sqlite3.Error, OSError) as exc:
+            raise StoreError(f"無法開啟資料庫 {self.path.name}（檔案可能損毀、不是案件資料庫、路徑是資料夾，"
+                             f"或沒有讀寫權限）；原檔不會被修改，請從備份還原到新的路徑：{exc}") from exc
+
+    def _initialize(self):
         self.path.parent.mkdir(parents=True, exist_ok=True)
         con = self._connect()
         try:
@@ -195,7 +211,7 @@ class CaseStore:
                     con.execute("UPDATE meta SET value=? WHERE key='schema_version'", (str(version),))
                     con.execute("COMMIT")
                 except Exception:
-                    con.execute("ROLLBACK")
+                    _rollback(con)
                     raise
         finally:
             con.close()
@@ -316,13 +332,17 @@ class CaseStore:
         dest = Path(dest)
         if dest.exists():
             raise StoreError(f"備份檔 {dest.name} 已存在，不會覆蓋")
-        dest.parent.mkdir(parents=True, exist_ok=True)
-        src, dst = self._connect(), sqlite3.connect(dest)
         try:
-            src.backup(dst)
-        finally:
-            dst.close()
-            src.close()
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            src, dst = self._connect(), sqlite3.connect(dest)
+            try:
+                src.backup(dst)
+            finally:
+                dst.close()
+                src.close()
+        except (sqlite3.Error, OSError) as exc:
+            dest.unlink(missing_ok=True)   # never leave a partial backup behind
+            raise StoreError(f"無法建立備份（請確認資料夾權限與剩餘空間）：{exc}") from exc
         return dest
 
     def restore(self, backup_path, confirm: bool = False) -> Path:

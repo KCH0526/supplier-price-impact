@@ -8,7 +8,7 @@
 ```bash
 python3.11 -m venv .venv
 . .venv/bin/activate
-python -m pip install -r requirements.txt
+python -m pip install -r requirements-lock.txt   # 固定版本
 python -m pytest -q -rs          # 必須 0 failed、0 skipped
 streamlit run app.py --server.address=127.0.0.1
 ```
