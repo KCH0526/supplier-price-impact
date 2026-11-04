@@ -23,7 +23,7 @@ def counts(path: str) -> dict:
 def main(argv: list[str]) -> int:
     path, label = argv[1], argv[2] if len(argv) > 2 else platform.system()
     c = counts(path)
-    line = (f"{label}: Python {platform.python_version()} ({platform.platform()}) — "
+    line = (f"{label}: Python {platform.python_version()} ({platform.platform()}) - "
             f"passed {c['passed']}, failed {c['failures']}, errors {c['errors']}, skipped {c['skipped']}")
     print(line)
     summary = os.environ.get("GITHUB_STEP_SUMMARY")
