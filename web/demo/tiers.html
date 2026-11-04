@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>示範：數量階梯安全底價（合成資料）</title>
+  <meta name="description" content="以合成資料示範 10、100、500 件在批次固定費分攤後的每件成本與安全底價。">
+  <link rel="canonical" href="https://example.com/demo/tiers.html">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要內容</a>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="../index.html">製造業報價毛利覆核工具</a>
+      <nav aria-label="主要選單">
+        <ul>
+        <li><a href="../index.html">首頁</a></li>
+        <li><a href="../features.html">功能</a></li>
+        <li><a href="../industries.html">適用產業</a></li>
+        <li><a href="../tools/index.html">免費工具</a></li>
+        <li><a href="../demo/index.html">合成資料示範</a></li>
+        <li><a href="../articles/index.html">教學</a></li>
+        <li><a href="../enterprise.html">企業版</a></li>
+        <li><a href="../faq.html">常見問題</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main id="main" class="wrap">
+<h1>數量階梯</h1>
+<p class="notice"><strong>這是合成示範資料</strong>：所有公司、客戶、料號與金額都是人工建構的，不是任何企業的真實資料。本頁是預先產生的靜態頁面，不接受任何檔案或資料輸入。</p>
+<p>示範頁：<a href="../demo/index.html">總覽</a>　<a href="../demo/cost.html">漲價前後</a>　<a href="../demo/quote-risk.html">毛利風險</a>　<a href="../demo/history.html">歷史報價</a>　<a href="../demo/tiers.html">數量階梯</a>　<a href="../demo/versions.html">版本差異</a>　<a href="../demo/draft.html">客戶草稿</a></p>
+<p>明細批次成本：單件變動成本 180.00 元（材料＋人工＋製費＋委外），每批固定費 1,500.00 元（開機＋換線治具），目標毛利率 20%。</p>
+<div class="table-scroll"><table><thead><tr><th class="num">數量</th><th class="num">每件分攤固定費</th><th class="num">每件成本</th><th class="num">安全底價（試算）</th></tr></thead><tbody>
+<tr><td class="num">10</td><td class="num">150.00</td><td class="num">330.00</td><td class="num">412.50</td></tr>
+<tr><td class="num">100</td><td class="num">15.00</td><td class="num">195.00</td><td class="num">243.75</td></tr>
+<tr><td class="num">500</td><td class="num">3.00</td><td class="num">183.00</td><td class="num">228.75</td></tr>
+</tbody></table></div>
+<p>安全底價＝每件成本 ÷（1 − 20%），無條件進位到小數兩位。這只是下限，不是系統核准的售價。</p>
+<p>若改用「既有完整單件成本」模式，系統會標示批次固定費「未計入」，避免和既有製費重複計算。本示範未模擬數量對原料議價、良率、工時的影響。</p>
+  </main>
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>本網站的示範資料全部是合成資料；試算結果僅供參考，不是正式報價，也不代表任何企業的真實成本。</p>
+      <p><a href="../privacy.html">隱私與安全說明</a>　<a href="../contact.html">聯絡與試用申請</a>　<a href="../install.html">安裝與使用方式</a></p>
+    </div>
+  </footer>
+</body>
+</html>

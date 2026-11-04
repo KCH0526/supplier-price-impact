@@ -11,7 +11,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import sys
+
 SRC = Path(__file__).resolve().parent
+sys.path.insert(0, str(SRC))
+import demo_content  # noqa: E402
 WEB = SRC.parent / "web"
 CONTENT = SRC / "content"
 BASE_URL = "https://example.com/"   # 部署前改成正式網域
@@ -31,9 +35,6 @@ PAGES = {
     "tools/index.html": ("免費報價試算工具｜成本增幅、毛利率、批次分攤、數量階梯",
                          "四個免費小工具，全部在您的瀏覽器內計算，不會傳送任何數字：成本增加百分比、毛利率與加價率、批次固定費分攤、數量階梯最低售價。",
                          "tools.html"),
-    "demo/index.html": ("合成資料示範｜不上傳檔案也能看懂結果",
-                        "以完全合成的示範資料，看供應商漲價、毛利風險、歷史報價、數量階梯、版本比較與客戶草稿的結果。",
-                        "demo.html"),
     "enterprise.html": ("企業私有版與導入服務｜資料留在公司內部",
                         "完整系統在貴公司電腦或內網執行，真實資料不上傳到公開網站。提供欄位對應、報價覆核與維護服務（價格待驗證）。",
                         "enterprise.html"),
@@ -71,6 +72,7 @@ PAGES = {
                                         "從 ERP 匯出 BOM、調價與報價資料時，常見的前導零遺失、單位不一致、日期格式問題與整理步驟。",
                                         "articles/erp-excel-cleanup.html"),
 }
+PAGES.update(demo_content.PAGES)
 
 NAV = [("index.html", "首頁"), ("features.html", "功能"), ("industries.html", "適用產業"), ("tools/index.html", "免費工具"),
        ("demo/index.html", "合成資料示範"), ("articles/index.html", "教學"), ("enterprise.html", "企業版"),
@@ -84,7 +86,8 @@ def _rel(target: str, current: str) -> str:
 
 def page(path: str) -> str:
     title, description, fragment = PAGES[path]
-    body = (CONTENT / fragment).read_text(encoding="utf-8").replace("{{ROOT}}", "../" * path.count("/"))
+    root = "../" * path.count("/")
+    body = fragment(root) if callable(fragment) else (CONTENT / fragment).read_text(encoding="utf-8").replace("{{ROOT}}", root)
     canonical = BASE_URL + ("" if path == "index.html" else path)
     current = ' aria-current="page"'
     nav = "\n".join(

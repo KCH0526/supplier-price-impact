@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>示範：報價版本差異比較（合成資料）</title>
+  <meta name="description" content="以合成資料示範同一張報價單兩個版本的單價、金額與成交狀態差異。">
+  <link rel="canonical" href="https://example.com/demo/versions.html">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要內容</a>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="../index.html">製造業報價毛利覆核工具</a>
+      <nav aria-label="主要選單">
+        <ul>
+        <li><a href="../index.html">首頁</a></li>
+        <li><a href="../features.html">功能</a></li>
+        <li><a href="../industries.html">適用產業</a></li>
+        <li><a href="../tools/index.html">免費工具</a></li>
+        <li><a href="../demo/index.html">合成資料示範</a></li>
+        <li><a href="../articles/index.html">教學</a></li>
+        <li><a href="../enterprise.html">企業版</a></li>
+        <li><a href="../faq.html">常見問題</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main id="main" class="wrap">
+<h1>報價版本差異</h1>
+<p class="notice"><strong>這是合成示範資料</strong>：所有公司、客戶、料號與金額都是人工建構的，不是任何企業的真實資料。本頁是預先產生的靜態頁面，不接受任何檔案或資料輸入。</p>
+<p>示範頁：<a href="../demo/index.html">總覽</a>　<a href="../demo/cost.html">漲價前後</a>　<a href="../demo/quote-risk.html">毛利風險</a>　<a href="../demo/history.html">歷史報價</a>　<a href="../demo/tiers.html">數量階梯</a>　<a href="../demo/versions.html">版本差異</a>　<a href="../demo/draft.html">客戶草稿</a></p>
+<p>報價單 Q-2603-007 第 1 行的第 1 版與第 2 版。依報價日期判斷先後。</p>
+<div class="table-scroll"><table><thead><tr><th>欄位</th><th>舊值</th><th>新值</th><th class="num">差額</th><th class="num">差異百分比</th><th>說明</th></tr></thead><tbody>
+<tr><td>報價日期</td><td>2026-03-05</td><td>2026-03-12</td><td class="num">—</td><td class="num">—</td><td>變更</td></tr>
+<tr><td>報價版本</td><td>1</td><td>2</td><td class="num">—</td><td class="num">—</td><td>變更</td></tr>
+<tr><td>客戶代碼</td><td>C-001</td><td>C-001</td><td class="num">—</td><td class="num">—</td><td>相同</td></tr>
+<tr><td>成品編號</td><td>P-1001</td><td>P-1001</td><td class="num">—</td><td class="num">—</td><td>相同</td></tr>
+<tr><td>規格圖面版次</td><td>B</td><td>B</td><td class="num">—</td><td class="num">—</td><td>相同</td></tr>
+<tr><td>報價數量</td><td>60.00</td><td>60.00</td><td class="num">0.00</td><td class="num">0.00%</td><td>相同</td></tr>
+<tr><td>計價單位</td><td>pcs</td><td>pcs</td><td class="num">—</td><td class="num">—</td><td>相同</td></tr>
+<tr><td>幣別</td><td>TWD</td><td>TWD</td><td class="num">—</td><td class="num">—</td><td>相同</td></tr>
+<tr><td>稅別</td><td>未稅</td><td>未稅</td><td class="num">—</td><td class="num">—</td><td>相同</td></tr>
+<tr><td>報價單價</td><td>1,000.00</td><td>990.00</td><td class="num">-10.00</td><td class="num">-1.00%</td><td>變更</td></tr>
+<tr><td>未稅金額</td><td>60,000.00</td><td>59,400.00</td><td class="num">-600.00</td><td class="num">-1.00%</td><td>變更</td></tr>
+<tr><td>交期</td><td>20天</td><td>20天</td><td class="num">—</td><td class="num">—</td><td>相同</td></tr>
+<tr><td>成交狀態</td><td>未知</td><td>成交</td><td class="num">—</td><td class="num">—</td><td>變更</td></tr>
+<tr><td>材質</td><td>AL6063</td><td>AL6063</td><td class="num">—</td><td class="num">—</td><td>相同</td></tr>
+<tr><td>製程類別</td><td>CNC＋陽極</td><td>CNC＋陽極</td><td class="num">—</td><td class="num">—</td><td>相同</td></tr>
+<tr><td>備註</td><td>第一版</td><td>修訂後降價</td><td class="num">—</td><td class="num">—</td><td>變更</td></tr>
+<tr><td>變更原因（人工輸入）</td><td>—</td><td>未提供（系統不推測變更原因）</td><td class="num">—</td><td class="num">—</td><td>僅顯示人工輸入內容</td></tr>
+</tbody></table></div>
+<p>單價差額只有在幣別、計價單位、稅別、數量都相同時才計算；同一天的兩個版本需由使用者指定先後，系統不依版本號猜測。</p>
+  </main>
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>本網站的示範資料全部是合成資料；試算結果僅供參考，不是正式報價，也不代表任何企業的真實成本。</p>
+      <p><a href="../privacy.html">隱私與安全說明</a>　<a href="../contact.html">聯絡與試用申請</a>　<a href="../install.html">安裝與使用方式</a></p>
+    </div>
+  </footer>
+</body>
+</html>

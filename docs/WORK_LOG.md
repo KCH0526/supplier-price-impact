@@ -30,8 +30,8 @@
 | #26 | 最終安全、品質及交付驗收（對抗測試、Docker、試用工具包） | 已合併（main `412547b`） |
 | #27 | 報告類型明確化（成本影響／客戶報價風險）、草稿與正式報價單區分、流程與文件整理 | 已合併（main `097fdfa`） |
 | #28 | 公開入口與商業化決策（`docs/PUBLIC_LAUNCH_DECISION.md`） | 已合併（main `6723618`） |
-| #29 | 公開繁體中文靜態網站（`web/`、`web_src/`）與 4 個瀏覽器內計算器 | 進行中（分支 `claude/public-website`） |
-| #30 | 公開合成資料 Demo（預先產生的靜態頁，無上傳） | 未開始 |
+| #29 | 公開繁體中文靜態網站（`web/`、`web_src/`）與 4 個瀏覽器內計算器 | 已合併（main `60faf9f`） |
+| #30 | 公開合成資料 Demo（`web_src/demo_content.py` 預先產生 `web/demo/`，無上傳） | 進行中（分支 `claude/public-demo`） |
 | #31 | 商業化與上線驗收文件 | 未開始 |
 
 技術 MVP 已完成，以合成資料驗收。交付閘門見 `docs/RELEASE_GATE.md`。商業驗證尚未開始（見 `docs/GO_TO_MARKET.md` 第 9 節）。

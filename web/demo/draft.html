@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>示範：只含客戶可見欄位的報價草稿（合成資料）</title>
+  <meta name="description" content="以合成資料示範依允許欄位清單產生的客戶報價草稿，不含成本、底價或其他客戶資料。">
+  <link rel="canonical" href="https://example.com/demo/draft.html">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要內容</a>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="../index.html">製造業報價毛利覆核工具</a>
+      <nav aria-label="主要選單">
+        <ul>
+        <li><a href="../index.html">首頁</a></li>
+        <li><a href="../features.html">功能</a></li>
+        <li><a href="../industries.html">適用產業</a></li>
+        <li><a href="../tools/index.html">免費工具</a></li>
+        <li><a href="../demo/index.html">合成資料示範</a></li>
+        <li><a href="../articles/index.html">教學</a></li>
+        <li><a href="../enterprise.html">企業版</a></li>
+        <li><a href="../faq.html">常見問題</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main id="main" class="wrap">
+<h1>客戶報價草稿</h1>
+<p class="notice"><strong>這是合成示範資料</strong>：所有公司、客戶、料號與金額都是人工建構的，不是任何企業的真實資料。本頁是預先產生的靜態頁面，不接受任何檔案或資料輸入。</p>
+<p>示範頁：<a href="../demo/index.html">總覽</a>　<a href="../demo/cost.html">漲價前後</a>　<a href="../demo/quote-risk.html">毛利風險</a>　<a href="../demo/history.html">歷史報價</a>　<a href="../demo/tiers.html">數量階梯</a>　<a href="../demo/versions.html">版本差異</a>　<a href="../demo/draft.html">客戶草稿</a></p>
+<p>草稿以<strong>允許欄位清單</strong>組成：只有客戶可以看的欄位。示範中的單價是「由人填寫」的示範數字，系統不會自動帶入任何價格。</p>
+<!-- draft-start -->
+<h2>報價草稿（價格已人工填寫，本系統不提供核准或簽名）</h2>
+<div class="table-scroll"><table><tbody><tr><th>客戶代碼</th><td>C-001</td></tr><tr><th>客戶名稱</th><td>北辰自動化（虛構）</td></tr><tr><th>報價單號</th><td>SQ-DEMO-1</td></tr><tr><th>報價版本</th><td>1</td></tr><tr><th>報價日期</th><td>2026-12-15</td></tr><tr><th>報價有效期限</th><td>2027-01-14</td></tr><tr><th>交易條件</th><td>月結 30 天</td></tr></tbody></table></div>
+<div class="table-scroll"><table><thead><tr><th>成品編號</th><th>成品名稱</th><th>規格圖面版次</th><th class="num">數量</th><th>計價單位</th><th>幣別</th><th class="num">報價單價</th><th>交期</th><th class="num">合計金額</th></tr></thead><tbody>
+<tr><td>P-DEMO</td><td>示範零件</td><td>—</td><td class="num">10.00</td><td>pcs</td><td>TWD</td><td class="num">420.00</td><td>15 天</td><td class="num">4,200.00</td></tr>
+<tr><td>P-DEMO</td><td>示範零件</td><td>—</td><td class="num">100.00</td><td>pcs</td><td>TWD</td><td class="num">250.00</td><td>15 天</td><td class="num">25,000.00</td></tr>
+<tr><td>P-DEMO</td><td>示範零件</td><td>—</td><td class="num">500.00</td><td>pcs</td><td>TWD</td><td class="num">235.00</td><td>15 天</td><td class="num">117,500.00</td></tr>
+</tbody></table></div>
+<p>合計：146,700.00 元</p>
+<!-- draft-end -->
+<p>系統不核准、不簽名、不寄送；正式報價須依公司流程由權責主管核准。</p>
+  </main>
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>本網站的示範資料全部是合成資料；試算結果僅供參考，不是正式報價，也不代表任何企業的真實成本。</p>
+      <p><a href="../privacy.html">隱私與安全說明</a>　<a href="../contact.html">聯絡與試用申請</a>　<a href="../install.html">安裝與使用方式</a></p>
+    </div>
+  </footer>
+</body>
+</html>
