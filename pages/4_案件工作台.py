@@ -37,6 +37,17 @@ def _reason(key, label="原因（必填）"):
     return st.text_input(label, key=key)
 
 
+DUPLICATE_MSG = "與剛才保存的內容相同，未重複保存。若確實要再新增一筆，請修改內容或原因。"
+
+
+def _is_repeat(key: str, signature) -> bool:
+    """True when the user presses save again with exactly what was just saved (no duplicate record)."""
+    if st.session_state.get(key) == signature:
+        st.warning(DUPLICATE_MSG)
+        return True
+    return False
+
+
 def _store_section():
     st.subheader("① 本機資料保存")
     enabled = st.checkbox("啟用本機保存（預設關閉）", key="store_enabled")
@@ -143,11 +154,15 @@ def _quote_section(store, case):
             st.error("；".join(errors))
             return
         snapshot = {"unit_cost": c} if c is not None else {}
+        signature = (str(store.path), case["case_id"], line, p, q, c, reason.strip())
+        if _is_repeat("q_last_signature", signature):
+            return
         try:
             v = store.add_quote_version(case["case_id"], line, p, q, snapshot, reason.strip())
         except StoreError as exc:
             st.error(str(exc))
             return
+        st.session_state["q_last_signature"] = signature
         st.session_state["last_saved"] = f"已保存：明細 {line} 報價版本 v{v}"
         st.rerun()
 
@@ -187,11 +202,15 @@ def _outcome_section(store, case, overview):
             st.error("；".join(errors))
             return
         version = next(o["latest"]["version"] for o in overview if o["line"]["line_no"] == line)
+        signature = (str(store.path), case["case_id"], line, version, repr(sorted(data.items())), reason.strip())
+        if _is_repeat("o_last_signature", signature):
+            return
         try:
             r = record_outcome(store, case["case_id"], line, version, data, reason.strip())
         except StoreError as exc:
             st.error(str(exc))
             return
+        st.session_state["o_last_signature"] = signature
         st.session_state["last_saved"] = f"已保存：明細 {line} v{version} 結果修訂 r{r}"
         st.rerun()
 

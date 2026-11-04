@@ -2,6 +2,9 @@
 
 以下畫面都使用 `samples/` 的**合成資料**。
 
+- 還沒安裝？請看 `docs/LOCAL_DEPLOYMENT.md` 第 2 節（Windows）或第 3 節（macOS）；安裝後雙擊 `start_windows.bat` 或 `start_macos.command` 啟動。
+- 想一次確認安裝、三條操作流程與備份還原是否正常：請照 `docs/FIRST_USE_CHECKLIST.md` 逐項勾選。
+
 ## 步驟 1：上傳三份 Excel，設定日期與毛利底線
 
 ![上傳畫面](images/01_upload.png)
@@ -64,9 +67,14 @@
 結果是「歷史價格低於安全底線」：安全底價 1,026.12，歷史區間 990～1,050。
 報告**僅供內部試算，需人工核准**，而且含其他客戶的價格，不可提供給客戶。
 
+## 報價工作台與案件工作台
+
+- 報價工作台（批次成本、數量階梯、版本比較、客戶草稿）：README 第 30～36 節；練習步驟見 `docs/FIRST_USE_CHECKLIST.md` 第 5 節。
+- 案件工作台（RFQ、案件狀態、實際成本、備份還原）：README 第 38 節；練習步驟見 `docs/FIRST_USE_CHECKLIST.md` 第 6 節。
+
 ## 看到錯誤時
 
-請照 README 第 15 節「常見錯誤」處理。每一個例外都會寫出工作表、Excel 列號與原因，修正原始 Excel 後重新上傳即可。
+請照 README 第 15 節「常見錯誤」處理；安裝、資料庫、備份或連接埠的問題見 `docs/LOCAL_DEPLOYMENT.md` 第 11 節。每一個例外都會寫出工作表、Excel 列號與原因，修正原始 Excel 後重新上傳即可。
 
 ## 操作影片
 

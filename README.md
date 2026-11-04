@@ -283,6 +283,7 @@ docker compose up --build
 - **不要**把 `docker-compose.yml` 的連接埠改成 `8501:8501`，否則同網段的人都能連線。
 - 更多細節見 [`docs/DEPLOYMENT_CHECKLIST.md`](docs/DEPLOYMENT_CHECKLIST.md)。
 - Windows／macOS 安裝、資料庫位置、備份還原、更新前備份與故障復原，見 [`docs/LOCAL_DEPLOYMENT.md`](docs/LOCAL_DEPLOYMENT.md)。
+- 安裝後雙擊 `start_windows.bat`／`start_macos.command` 啟動；第一次使用請照 [`docs/FIRST_USE_CHECKLIST.md`](docs/FIRST_USE_CHECKLIST.md) 驗收。
 
 ## 14. 測試
 

@@ -158,3 +158,44 @@ def test_backup_and_restore_requires_confirmation(tmp_path):
     _btn(app, "還原").click().run()
     assert not app.exception
     assert "已還原" in _texts(app)
+
+
+# ---- PR #40: a second press of the same save button must not create a duplicate record ----
+
+def _quote(app, price="300"):
+    app.selectbox(key="case_id").set_value(CASE).run()
+    app.selectbox(key="q_line").set_value("1").run()
+    for k, v in (("q_price", price), ("q_qty", "100"), ("q_unit_cost", "200"), ("q_reason", "首次報價")):
+        app.text_input(key=k).set_value(v).run()
+    _btn(app, "新增報價版本").click().run()
+    assert not app.exception
+
+
+def test_pressing_save_quote_twice_does_not_duplicate(tmp_path):
+    app = _imported(tmp_path)
+    _quote(app)
+    _btn(app, "新增報價版本").click().run()
+    store = CaseStore(tmp_path / "cases.db", enabled=True)
+    assert len(store.quote_versions(CASE, "1")) == 1
+    assert any("與剛才保存的內容相同" in w.value for w in app.warning)
+    # A real change is still saved as a new version.
+    app.text_input(key="q_price").set_value("310").run()
+    _btn(app, "新增報價版本").click().run()
+    assert [v["unit_price"] for v in store.quote_versions(CASE, "1")] == [300, 310]
+
+
+def test_pressing_save_outcome_twice_does_not_duplicate(tmp_path):
+    app = _imported(tmp_path)
+    _quote(app)
+    app.selectbox(key="o_line").set_value("1").run()
+    app.radio(key="o_result").set_value("成交").run()
+    app.text_input(key="o_won").set_value("100").run()
+    app.text_input(key="o_actual_qty").set_value("100").run()
+    app.radio(key="o_cost_mode").set_value("實際總成本").run()
+    app.text_input(key="o_total").set_value("22500").run()
+    app.text_input(key="o_reason").set_value("月結").run()
+    _btn(app, "回填結果").click().run()
+    _btn(app, "回填結果").click().run()
+    store = CaseStore(tmp_path / "cases.db", enabled=True)
+    assert len(store.outcomes(CASE, "1", 1)) == 1
+    assert any("與剛才保存的內容相同" in w.value for w in app.warning)
