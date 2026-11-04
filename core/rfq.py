@@ -140,6 +140,9 @@ def read_rfq(source: Source, sheet: str = RFQ_SHEET, columns: dict | None = None
 
 def save_rfq_cases(store: CaseStore, rfq: RFQImport, reason: str, source: str = "RFQ 匯入") -> int:
     """Save every imported case; an existing case id is refused (never overwritten)."""
+    existing = [c["case_id"] for c, _ in rfq.cases if store.get_case(c["case_id"]) is not None]
+    if existing:
+        raise StoreError(f"以下案件已存在，不會覆寫，本次未保存任何案件：{'、'.join(existing)}")
     for case, lines in rfq.cases:
         store.add_case(case, lines, reason=reason, source=source)
     return len(rfq.cases)
