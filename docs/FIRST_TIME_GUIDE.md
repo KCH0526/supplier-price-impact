@@ -48,6 +48,22 @@
 
 練習用的檔案：`samples/sample_erp_export.xlsx` 搭配 `samples/sample_field_mapping.json`。
 
+## 歷史報價與建議報價
+
+![匯入歷史報價](images/05_history_import.png)
+
+1. 在左側選單點「歷史報價與建議報價」。
+2. 上傳 `samples/historical/` 的兩份歷史報價檔，以及兩份 `mapping_*.json`。
+3. 每個檔案選擇對應的設定，按「匯入歷史報價」，查看匯入筆數、重複筆數與例外。
+4. 在「② 目前成本」上傳 `sample_bom.xlsx` 與 `sample_price_increase.xlsx`。
+5. 查詢條件：P-1001、60 件、圖面版次 B、試算日 2026-12-15；勾選調價生效日 2026-12-01。
+6. 按「產生建議報價」。
+
+![建議報價](images/06_recommendation.png)
+
+結果是「歷史價格低於安全底線」：安全底價 1,026.12，歷史區間 990～1,050。
+報告**僅供內部試算，需人工核准**，而且含其他客戶的價格，不可提供給客戶。
+
 ## 看到錯誤時
 
 請照 README 第 15 節「常見錯誤」處理。每一個例外都會寫出工作表、Excel 列號與原因，修正原始 Excel 後重新上傳即可。

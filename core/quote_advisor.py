@@ -43,8 +43,9 @@ class Advice:
     reference: dict | None
     warnings: list[dict] = field(default_factory=list)
     missing: list[str] = field(default_factory=list)
-    evidence: pd.DataFrame | None = None
+    evidence: pd.DataFrame | None = None       # included candidates only
     query: dict = field(default_factory=dict)
+    candidates: pd.DataFrame | None = None     # every candidate, included and excluded, with reasons
     label: str = INTERNAL_LABEL
 
 
@@ -52,9 +53,11 @@ def _pct(value: Decimal) -> str:
     return f"{(value * 100).quantize(Decimal('0.01'))}%"
 
 
-def _floor(costs: CostResult, product: str, unit: str, margin: Decimal) -> tuple[dict, list[str]]:
+def _floor(costs: CostResult | None, product: str, unit: str, margin: Decimal) -> tuple[dict, list[str]]:
     floor = {"可用": False, "新完整成本": None, "原完整成本": None, "目標毛利率": margin, "安全底價": None,
              "計算式": None}
+    if costs is None:
+        return floor, ["尚未提供 BOM 與供應商調價資料，沒有目前成本"]
     rows = {r["成品編號"]: r for r in costs.cost_impact.to_dict("records")}
     row = rows.get(product)
     if row is None:
@@ -68,11 +71,11 @@ def _floor(costs: CostResult, product: str, unit: str, margin: Decimal) -> tuple
     new, old = Decimal(row["新成本"]), Decimal(row["原成本"])
     price = ceil_cent(new / (1 - margin))
     floor.update({"可用": True, "新完整成本": new, "原完整成本": old, "安全底價": price,
-                  "計算式": f"{new} ÷ (1 − {margin}) = {new / (1 - margin):.4f}，無條件進位為 {price}"})
+                  "計算式": f"{new:.2f} ÷ (1 − {margin}) = {new / (1 - margin):.4f}，無條件進位為 {price}"})
     return floor, []
 
 
-def advise_quote(search: SearchResult, records: pd.DataFrame, costs: CostResult, target_margin,
+def advise_quote(search: SearchResult, records: pd.DataFrame, costs: CostResult | None, target_margin,
                  price_increase_date: dt.date | None = None, proposed_price=None) -> Advice:
     margin = parse_min_margin(target_margin)
     q = search.query
@@ -157,4 +160,5 @@ def advise_quote(search: SearchResult, records: pd.DataFrame, costs: CostResult,
         status, message = STATUS_REFERENCE, (f"安全底價 {floor['安全底價']}；歷史參考區間 {stats['最低']}～{stats['最高']}"
                                             "（中位數 " + str(stats["中位數"]) + "），仍需人工核准")
     return Advice(status, message, floor, stats, warnings, missing, evidence,
-                  dict(q, 目標毛利率=margin, 供應商調價生效日=price_increase_date, 擬報價=proposed_price))
+                  dict(q, 目標毛利率=margin, 供應商調價生效日=price_increase_date, 擬報價=proposed_price),
+                  candidates=search.candidates)
