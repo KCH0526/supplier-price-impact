@@ -87,3 +87,18 @@ def test_readme_covers_quote_memory_topics():
                   "相似案件查詢", "報價風險解讀", "Historical Evidence", "導入流程", "人工導入服務",
                   "商業化現況與未經驗證事項", "僅供內部試算，需人工核准", "沒有**使用 AI"):
         assert topic in text, topic
+
+
+def test_readme_covers_workbench_topics():
+    text = (ROOT / "README.md").read_text(encoding="utf-8")
+    for topic in ("報價工作台：解決的問題", "兩種成本模式與批次成本計算", "如何閱讀數量階梯", "如何比較報價版本",
+                  "如何產生客戶報價草稿", "內部覆核報告與客戶草稿的差異", "空白代表未知", "412.50",
+                  "docs/images/07_workbench_tiers.png", "尚未完成的驗證"):
+        assert topic in text, topic
+
+
+def test_standardized_history_demo_equals_a_fresh_build():
+    spec = importlib.util.spec_from_file_location("qr2", DEMO / "build_quote_recommendation_example.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    assert _values(DEMO / "historical_quotes_standardized_demo.xlsx") == _values(module.build_standardized_history())

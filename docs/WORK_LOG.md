@@ -25,8 +25,8 @@
 | #21 | 安全的客戶報價草稿（`core/customer_draft.py`；規格 `docs/COMMERCIAL_QUOTING_SPEC.md`） | 已合併（main `ad9b298`） |
 | #22 | 批次成本模型（`core/batch_cost.py`，兩種互斥模式） | 已合併（main `0dcb3a1`） |
 | #23 | 數量階梯與最低報價（`core/quantity_tiers.py`） | 已合併（main `e68f5a9`） |
-| #24 | 報價版本比較（`core/quote_versions.py`） | 進行中（分支 `claude/pr24-quote-versions`） |
-| #25 | 報價工作台頁面、內部報告、文件 | 未開始 |
+| #24 | 報價版本比較（`core/quote_versions.py`） | 已合併（main `aeb6220`） |
+| #25 | 報價工作台頁面（`pages/3_報價工作台.py`）、內部報告、文件 | 進行中（分支 `claude/pr25-quote-workbench`） |
 | #26 | 最終安全、品質及交付驗收 | 未開始 |
 
 技術 MVP 已完成，以合成資料驗收。交付閘門見 `docs/RELEASE_GATE.md`。商業驗證尚未開始（見 `docs/GO_TO_MARKET.md` 第 9 節）。
