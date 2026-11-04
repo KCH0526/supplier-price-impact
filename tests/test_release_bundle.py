@@ -100,11 +100,14 @@ def test_bundle_imports_reads_samples_and_runs_the_environment_check(bundle):
             "r = core.rfq.read_rfq('samples/rfq/rfq_sample.xlsx');"
             "assert b.data is not None and p.data is not None and len(r.cases) == 4;"
             "print('bundle-ok', core.case_store.__file__)")
-    out = subprocess.run([sys.executable, "-c", code], cwd=root, capture_output=True, text=True, encoding="utf-8")
+    import os
+    utf8 = dict(os.environ, PYTHONIOENCODING="utf-8")  # Windows consoles default to cp1252
+    out = subprocess.run([sys.executable, "-c", code], cwd=root, capture_output=True, text=True, encoding="utf-8",
+                         env=utf8)
     assert out.returncode == 0, out.stderr
     # The modules must come from the extracted bundle, not from the source repository.
     loaded = Path(out.stdout.strip().split("bundle-ok ", 1)[1]).resolve()
     assert root.resolve() in loaded.parents
     env = subprocess.run([sys.executable, "tools/check_env.py", "--port", "0", "--data-dir", str(root / "報價 資料")],
-                         cwd=root, capture_output=True, text=True, encoding="utf-8")
+                         cwd=root, capture_output=True, text=True, encoding="utf-8", env=utf8)
     assert "[OK] Python" in env.stdout and "[OK] 資料夾" in env.stdout
