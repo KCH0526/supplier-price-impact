@@ -126,8 +126,12 @@ def test_damaged_backup_in_special_folder_keeps_current_data(tmp_path):
 
 
 def test_backup_vanishing_during_restore_keeps_current_data(tmp_path, monkeypatch):
-    """E.g. a USB drive unplugged after the check: clear error, current data unchanged."""
-    d = tmp_path / "what?"
+    """E.g. a USB drive unplugged after the check: clear error, current data unchanged.
+
+    '#' is legal on Windows, macOS and Linux; before PR #39 it cut the URI short, so SQLite
+    created an empty database at the truncated path and copied it over the live data.
+    """
+    d = tmp_path / "報價#1"
     store = _populated(d / "cases.db")
     expected = _dump(store.path)
     gone = d / "unplugged" / "backup.db"
