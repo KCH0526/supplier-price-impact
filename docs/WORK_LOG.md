@@ -34,8 +34,8 @@
 | #30 | 公開合成資料 Demo（`web_src/demo_content.py` 預先產生 `web/demo/`，無上傳） | 已合併（main `b05f699`） |
 | #31 | 商業化與上線驗收文件（`docs/launch/` 13 份） | 已合併（main `8434626`） |
 | #32 | 本機案件資料保存層（`core/case_store.py`）與路線圖（`docs/PRODUCTION_QUOTING_ROADMAP.md`） | 已合併（`fde3e0c`） |
-| #33 | 客戶詢價 RFQ 匯入（`core/rfq.py`）、合成樣本 `samples/rfq/rfq_sample.xlsx`、案件狀態流程 | 進行中（分支 `claude/rfq-cases`） |
-| #34 | 成交與實際成本回饋、差異分析 | 未開始 |
+| #33 | 客戶詢價 RFQ 匯入（`core/rfq.py`）、合成樣本 `samples/rfq/rfq_sample.xlsx`、案件狀態流程 | 已合併（`895f8f0`） |
+| #34 | 成交與實際成本回饋、差異分析（`core/quote_feedback.py`） | 進行中（分支 `claude/quote-feedback`） |
 | #35 | 案件工作台頁面與稽核報告 | 未開始 |
 | #36 | 候選版本驗收與文件 | 未開始 |
 
