@@ -186,3 +186,11 @@ def test_no_price_is_ever_zero_or_invented(records):
     a = _advise(records, _costs(product_cost=False), dt.date(2026, 12, 1))
     assert a.floor["安全底價"] is None and a.reference is None
     assert a.status == STATUS_NO_FLOOR
+
+
+def test_no_cost_data_at_all_gives_no_floor(records):
+    search = search_similar_quotes(records, "P-1001", 60, dt.date(2026, 12, 15), "pcs", drawing_version="B")
+    a = advise_quote(search, records, None, "0.15")
+    assert a.status == STATUS_NO_FLOOR and a.floor["安全底價"] is None
+    assert any("BOM" in m for m in a.missing)
+    assert a.reference["中位數"] == Decimal("1050")  # history is still shown
