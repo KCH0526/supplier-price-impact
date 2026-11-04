@@ -36,7 +36,7 @@ CONFIG_VERSION = 1
 MAX_CONFIG_BYTES = 1_000_000
 TRACE_COLUMN = "來源Excel列號"
 ID_TARGET_COLUMNS = {"成品編號", "子件料號", "工廠代碼", "供應商代碼", "BOM版本", "報價單號", "行號", "客戶代碼",
-                     "報價行號", "報價版本", "規格圖面版次"}
+                     "報價行號", "報價版本", "規格圖面版次", "詢價單號", "詢價行號", "詢價版本"}
 _FORMULA_START = ("=", "+", "-", "@")
 
 
@@ -63,6 +63,11 @@ TARGETS: dict[str, TargetSchema] = {
     ]),
     "OpenQuotes": TargetSchema(QUOTE_REQUIRED_COLUMNS, ["客戶名稱"]),
     # Historical quotes (docs/HISTORICAL_QUOTE_PRODUCT_SPEC.md section 3).
+    # Customer RFQ (docs/PRODUCTION_QUOTING_ROADMAP.md, PR #33).
+    "RFQ": TargetSchema(
+        ["詢價單號", "詢價行號", "客戶代碼", "詢價日期", "成品編號", "詢價數量", "計價單位", "幣別"],
+        ["詢價版本", "成品名稱", "規格圖面版次", "要求交期", "備註"],
+    ),
     # Batch cost (docs/COMMERCIAL_QUOTING_SPEC.md section 3).
     "BatchCost": TargetSchema(
         ["成品編號", "成本基準日", "幣別", "單位", "單件材料變動成本", "單件人工變動成本", "單件製造費用",
