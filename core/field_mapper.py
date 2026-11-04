@@ -35,7 +35,8 @@ CONFIG_FORMAT = "supplier-quote-margin-guard.field-mapping"
 CONFIG_VERSION = 1
 MAX_CONFIG_BYTES = 1_000_000
 TRACE_COLUMN = "來源Excel列號"
-ID_TARGET_COLUMNS = {"成品編號", "子件料號", "工廠代碼", "供應商代碼", "BOM版本", "報價單號", "行號", "客戶代碼"}
+ID_TARGET_COLUMNS = {"成品編號", "子件料號", "工廠代碼", "供應商代碼", "BOM版本", "報價單號", "行號", "客戶代碼",
+                     "報價行號", "報價版本", "規格圖面版次"}
 _FORMULA_START = ("=", "+", "-", "@")
 
 
@@ -61,6 +62,11 @@ TARGETS: dict[str, TargetSchema] = {
         "供應商代碼", "供應商名稱", "工廠代碼", "報價單號", "計價數量", "價格迄日", "報價狀態",
     ]),
     "OpenQuotes": TargetSchema(QUOTE_REQUIRED_COLUMNS, ["客戶名稱"]),
+    # Historical quotes (docs/HISTORICAL_QUOTE_PRODUCT_SPEC.md section 3).
+    "HistoricalQuotes": TargetSchema(
+        ["報價單號", "報價行號", "報價日期", "客戶代碼", "成品編號", "報價數量", "計價單位", "幣別", "報價單價", "稅別"],
+        ["報價版本", "成品名稱", "規格圖面版次", "材質", "製程類別", "報價狀態", "成交狀態", "交期", "備註"],
+    ),
 }
 
 

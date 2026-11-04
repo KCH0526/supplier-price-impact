@@ -16,7 +16,12 @@
 | #12 | Excel 欄位對應器（`core/field_mapper.py`、`pages/1_Excel_欄位對應.py`） | 已合併（main `2dcd22b`） |
 | #13 | 示範與銷售素材（demo/、截圖、影片、DEMO_SCRIPT、FIRST_TIME_GUIDE、ONE_PAGER、SERVICE_SCOPE） | 已合併（main `cff32c5`） |
 | #14 | 品質與效能（benchmarks/、PERFORMANCE.md、處理中提示） | 已合併（main `1d99b70`） |
-| #15 | 客戶交付工具包（`docs/delivery/` 10 份文件） | 已提交 PR #15；合併 SHA 請下一個 session 以 `git log --merges -1` 補記 |
+| #15 | 客戶交付工具包（`docs/delivery/` 10 份文件） | 已合併（main `cbb4564`） |
+| #16 | 歷史報價匯入與標準化（`core/historical_quotes.py`、規格 `docs/HISTORICAL_QUOTE_PRODUCT_SPEC.md`） | 進行中（分支 `claude/pr16-historical-quote-import`） |
+| #17 | 歷史報價查詢與相似案件檢索 | 未開始 |
+| #18 | 建議報價與異常警示 | 未開始 |
+| #19 | 歷史報價頁面、覆核報告、README | 未開始 |
+| #20 | 對抗測試、效能、交付驗收 | 未開始 |
 
 技術 MVP 已完成，以合成資料驗收。交付閘門見 `docs/RELEASE_GATE.md`。商業驗證尚未開始（見 `docs/GO_TO_MARKET.md` 第 9 節）。
 
@@ -58,5 +63,5 @@ streamlit run app.py --server.address=127.0.0.1
 
 - 雲端開發環境的 Docker build：先啟動 `dockerd`，再執行
   `docker buildx build --network host --secret id=corp_ca,src=/root/.ccr/ca-bundle.crt -t spi --load .`
-- 額度：使用者回報剩餘 US$86（2026-11-04 開始時）。session 內無法讀取實際用量，所以各階段實際花費未知。
+- 額度：使用者回報剩餘 US$86（2026-11-04 PR #11 開始時）、US$75（PR #16 開始時）。session 內無法讀取實際用量，所以各階段實際花費未知。
 - `gh` CLI 只能用於搜尋；PR 操作請使用 GitHub MCP 工具。
