@@ -9,3 +9,5 @@ result.xlsx
 *.sqlite
 *.sqlite3
 case_backups/
+*.db-journal
+case_data/

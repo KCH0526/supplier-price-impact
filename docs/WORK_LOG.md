@@ -37,15 +37,28 @@
 | #33 | 客戶詢價 RFQ 匯入（`core/rfq.py`）、合成樣本 `samples/rfq/rfq_sample.xlsx`、案件狀態流程 | 已合併（`895f8f0`） |
 | #34 | 成交與實際成本回饋、差異分析（`core/quote_feedback.py`） | 已合併（`9c5712c`） |
 | #35 | 案件工作台頁面（`pages/4_案件工作台.py`）與 6 張工作表的內部稽核報告（`core/case_report.py`） | 已合併（`6dc954d`） |
-| #36 | 企業內部版 Release Candidate 驗收（`docs/ENTERPRISE_RC_REPORT.md`、RC 測試、文件更新） | 進行中（分支 `claude/enterprise-rc`） |
+| #36 | 企業內部版 Release Candidate 驗收（`docs/ENTERPRISE_RC_REPORT.md`、RC 測試、文件更新） | 已合併（main `d3801c8e83644c67899646a2400fd53310139048`） |
+| #37 | 部署可重現性：`requirements-lock.txt`、`docs/LOCAL_DEPLOYMENT.md`、資料庫開啟／備份／磁碟已滿的錯誤處理修正、預設只綁定 127.0.0.1 | 進行中（分支 `claude/deploy-repro`） |
 
-技術 MVP 已完成，以合成資料驗收。交付閘門見 `docs/RELEASE_GATE.md`。商業驗證尚未開始（見 `docs/GO_TO_MARKET.md` 第 9 節）。
+技術 MVP 已完成，以合成資料驗收。交付閘門見 `docs/RELEASE_GATE.md`。
+
+### 企業內部版 Release Candidate 的使用限制（PR #32～#37）
+
+- 只適合**一家企業、一台電腦、一位使用者**；不支援多使用者，沒有登入、角色、權限。
+- 操作人欄位是「人工填寫（未經身分驗證）」，不是電子簽核；稽核紀錄無法證明未被竄改。
+- 案件資料保存預設關閉；資料庫只能放本機磁碟，不可放網路共享或雲端同步資料夾。
+- SQLite 檔案**沒有加密**，需使用 BitLocker／FileVault；備份需手動建立，沒有排程或異地備份。
+- 只用合成資料驗證；**尚未**通過真實 ERP 資料或客戶實際使用驗收；Windows／macOS 安裝步驟尚未實機驗證。
+- 只能在本機或私有內網使用，不可開放公開網路；不呼叫外部 API。
+- 安裝必須使用 `requirements-lock.txt`；升級套件需另開 PR 並重新驗收。部署與復原步驟見 `docs/LOCAL_DEPLOYMENT.md`。
+
+商業驗證尚未開始（見 `docs/GO_TO_MARKET.md` 第 9 節）。
 
 ## 常用指令
 
 ```bash
 python3.11 -m venv .venv && . .venv/bin/activate
-python -m pip install -r requirements.txt
+python -m pip install -r requirements-lock.txt   # 固定版本，與驗收環境相同
 python -m pytest -q -rs     # 必須 0 failed、0 skipped
 streamlit run app.py --server.address=127.0.0.1
 ```
@@ -106,5 +119,5 @@ streamlit run app.py --server.address=127.0.0.1
 
 - 雲端開發環境的 Docker build：先啟動 `dockerd`，再執行
   `docker buildx build --network host --secret id=corp_ca,src=/root/.ccr/ca-bundle.crt -t spi --load .`
-- 額度：使用者回報剩餘 US$86（2026-11-04 PR #11 開始時）、US$75（PR #16 開始時）；US$64（PR #21 開始時）；US$35（PR #32 開始時）；各階段實際花費未知。session 內無法讀取實際用量，所以各階段實際花費未知。
+- 額度：使用者回報剩餘 US$86（2026-11-04 PR #11 開始時）、US$75（PR #16 開始時）；US$64（PR #21 開始時）；US$35（PR #32 開始時）；PR #37 開始時未提供；各階段實際花費未知。session 內無法讀取實際用量，所以各階段實際花費未知。
 - `gh` CLI 只能用於搜尋；PR 操作請使用 GitHub MCP 工具。

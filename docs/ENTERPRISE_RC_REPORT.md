@@ -25,7 +25,7 @@
 | 本機測試 | Python 3.11.18、SQLite 3.45.1、streamlit==1.66.1、pandas==3.1.0、openpyxl==3.1.5、numpy==2.4.6、pytest==9.2.0 |
 | Docker 映像 | 基底 `python:3.11-slim`（`python@sha256:db20d8506e2f15b6db39b40b6015ca46bae855dec6dd326d462cfe79ae972893`）、Python 3.11.18、SQLite 3.46.1、streamlit==1.66.1、pandas==3.1.0、openpyxl==3.1.5、numpy==2.4.6 |
 
-`requirements.txt` 使用版本範圍；正式導入時，建議依上表固定版本後再安裝。
+PR #37 起，上表版本已固定在 `requirements-lock.txt`（直接與傳遞依賴分開列出），CI 與 Dockerfile 都以它安裝。
 
 驗收時 Docker Hub 回應 429（拉取次數限制），所以改用 Google 的 Docker Hub 公開鏡像 `mirror.gcr.io/library/python:3.11-slim` 取得同一個官方映像，再於本機標記為 `python:3.11-slim`。**Dockerfile 沒有修改。**
 
@@ -47,5 +47,5 @@
 ## 5. 建議的下一步（依優先順序）
 1. 由 repository 管理者在 GitHub 設定 main 的分支保護（必要檢查 `test`、禁止 force push）。
 2. 找一家願意試用的企業，用其匿名化的 RFQ 與實際成本資料做欄位對應與口徑確認。
-3. 固定 `requirements.txt` 的套件版本。
+3. ~~固定套件版本~~（PR #37 已完成，見 `requirements-lock.txt` 與 `docs/LOCAL_DEPLOYMENT.md`）。
 4. 若需要多人使用，另行設計伺服器版（登入、權限、加密、稽核防竄改），不要直接把本版放到共享磁碟。
