@@ -569,7 +569,7 @@ ERP 匯出檔的欄位名稱和本工具不同時，不必手動改 Excel：
 
 | 項目 | 現況 |
 |---|---|
-| 程式功能 | 已完成，並通過自動化測試與瀏覽器實測（合成資料） |
+| 程式功能 | 已完成（含報價工作台），並通過自動化測試、瀏覽器實測與 Docker 驗證（全部使用合成資料） |
 | 真實客戶資料 | **沒有** |
 | 客戶數量、成交、評價 | **沒有**任何紀錄 |
 | 節省時間、提升營收 | **沒有**實測數據，不做任何宣稱 |
@@ -695,6 +695,7 @@ ERP 匯出檔的欄位名稱和本工具不同時，不必手動改 Excel：
 | [`docs/PRODUCT_DECISION.md`](docs/PRODUCT_DECISION.md) | 產品決策紀錄；分開列出已證實事實、推論與未驗證假設 |
 | [`docs/DEPLOYMENT_CHECKLIST.md`](docs/DEPLOYMENT_CHECKLIST.md) | 部署與實際驗收紀錄 |
 | [`docs/CUSTOMER_ONBOARDING.md`](docs/CUSTOMER_ONBOARDING.md) | 客戶導入與欄位對應流程 |
+| [`docs/delivery/11_TRIAL_KIT.md`](docs/delivery/11_TRIAL_KIT.md) | 第一位客戶試用工具包（驗收清單、訪談題目、5 分鐘 Demo、回饋表、試探性報價） |
 | [`docs/delivery/README.md`](docs/delivery/README.md) | 客戶交付工具包：需求表、授權檢查、確認表、驗收表、服務範圍、FAQ、資料清除 |
 | [`docs/GO_TO_MARKET.md`](docs/GO_TO_MARKET.md) | 目標客戶、訪談題目、待測定價 |
 | [`docs/WORK_LOG.md`](docs/WORK_LOG.md) | 開發進度交接 |
