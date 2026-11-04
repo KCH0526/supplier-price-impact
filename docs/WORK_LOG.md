@@ -15,8 +15,8 @@
 | #11 | 正式交付驗收：修正損毀 xlsx 造成的錯誤、Dockerfile 支援企業 CA、RELEASE_GATE | 已合併（main `62a358b`） |
 | #12 | Excel 欄位對應器（`core/field_mapper.py`、`pages/1_Excel_欄位對應.py`） | 已合併（main `2dcd22b`） |
 | #13 | 示範與銷售素材（demo/、截圖、影片、DEMO_SCRIPT、FIRST_TIME_GUIDE、ONE_PAGER、SERVICE_SCOPE） | 已合併（main `cff32c5`） |
-| #14 | 品質與效能（benchmarks/、PERFORMANCE.md、處理中提示） | 進行中（分支 `claude/pr14-quality-performance`） |
-| #15 | 客戶交付工具包 | 未開始 |
+| #14 | 品質與效能（benchmarks/、PERFORMANCE.md、處理中提示） | 已合併（main `1d99b70`） |
+| #15 | 客戶交付工具包（`docs/delivery/` 10 份文件） | 已提交 PR #15；合併 SHA 請下一個 session 以 `git log --merges -1` 補記 |
 
 技術 MVP 已完成，以合成資料驗收。交付閘門見 `docs/RELEASE_GATE.md`。商業驗證尚未開始（見 `docs/GO_TO_MARKET.md` 第 9 節）。
 
@@ -35,12 +35,24 @@ streamlit run app.py --server.address=127.0.0.1
 - `samples/sample_bom.xlsx`、`samples/sample_price_increase.xlsx`、`samples/sample_open_quotes.xlsx`
 - `tests/fixtures/` 內全部檔案
 
+## PR 連結
+
+#6～#15：https://github.com/KCH0526/supplier-price-impact/pull/6 至 /pull/15（編號依序）。
+
+## 已知限制（截至 PR #15）
+
+- 只用合成資料驗收；沒有任何真實客戶資料、訪談或成交紀錄。
+- 只支援單階 BOM、單一工廠與版本、TWD、每件計價；欄位對應不支援合併欄位或常數欄位。
+- 一般網路下、不傳入 CA 的原始 Dockerfile 建置，以及 Windows／macOS Docker Desktop，都尚未驗證。
+- 匯出 Excel 是最慢的環節（50,000 列約 33 秒）。
+- 法律相關文件都是草案，必須經專業人士審閱。
+
 ## 下一步建議（依價值排序）
 
-1. 在客戶或自己的 Windows／macOS 電腦上，用 repo 原始 Dockerfile 執行 `docker compose up --build`，並完成一次三檔上傳（目前只在雲端開發環境驗證過，且當時以 build secret 傳入 proxy CA）。
+1. 在自己的 Windows／macOS 電腦執行 `docker compose up --build`，用三份範例與欄位對應範例各走一次（見 `docs/RELEASE_GATE.md` 第 3 節）。
 2. 依 `docs/GO_TO_MARKET.md` 進行真實訪談（目標 10 位）。這一步需要真人執行，AI 不能代勞或虛構結果。
-3. 取得第一份經授權、已去識別化的真實資料，依 `docs/CUSTOMER_ONBOARDING.md` 做欄位對應，記錄實際花費時間。
-4. 依真實資料調整報價狀態對照、欄位別名；不要先開發多階 BOM 或匯率功能。
+3. 取得第一份經授權、已去識別化的真實資料，依 `docs/delivery/` 的流程導入，記錄欄位對應實際花費的時間。
+4. 依真實資料的需要再決定開發什麼（例如報價狀態對照、欄位別名）；不要先開發多階 BOM 或匯率功能。
 
 ## 環境備忘
 
