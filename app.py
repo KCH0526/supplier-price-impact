@@ -188,10 +188,12 @@ def main():
                             + edited_costs.to_json(orient="records").encode()).hexdigest()
     if st.button("產生毛利風險報告", type="primary", width="stretch"):
         try:
-            matched = match_prices(bom.data, quote.data, as_of)
-            calculated = calculate_cost_impact(matched, edited_costs)
-            risk = assess_quote_risk(open_quotes.data, calculated, as_of, min_margin) if open_quotes else None
-            content = build_report(matched, calculated, as_of, risk)
+            # Large files (tens of thousands of BOM lines) can take ~40 seconds.
+            with st.spinner("報告產生中，資料量大時可能需要約一分鐘，請勿重複點擊…"):
+                matched = match_prices(bom.data, quote.data, as_of)
+                calculated = calculate_cost_impact(matched, edited_costs)
+                risk = assess_quote_risk(open_quotes.data, calculated, as_of, min_margin) if open_quotes else None
+                content = build_report(matched, calculated, as_of, risk)
         except Exception as exc:
             st.error(f"無法產出報告：{exc}")
         else:
