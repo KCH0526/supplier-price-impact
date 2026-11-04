@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>示範：歷史報價參考與安全底價（合成資料）</title>
+  <meta name="description" content="以合成資料示範歷史報價逐筆選入或排除的原因、安全底價與警示。">
+  <link rel="canonical" href="https://example.com/demo/history.html">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要內容</a>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="../index.html">製造業報價毛利覆核工具</a>
+      <nav aria-label="主要選單">
+        <ul>
+        <li><a href="../index.html">首頁</a></li>
+        <li><a href="../features.html">功能</a></li>
+        <li><a href="../industries.html">適用產業</a></li>
+        <li><a href="../tools/index.html">免費工具</a></li>
+        <li><a href="../demo/index.html">合成資料示範</a></li>
+        <li><a href="../articles/index.html">教學</a></li>
+        <li><a href="../enterprise.html">企業版</a></li>
+        <li><a href="../faq.html">常見問題</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main id="main" class="wrap">
+<h1>歷史報價參考</h1>
+<p class="notice"><strong>這是合成示範資料</strong>：所有公司、客戶、料號與金額都是人工建構的，不是任何企業的真實資料。本頁是預先產生的靜態頁面，不接受任何檔案或資料輸入。</p>
+<p>示範頁：<a href="../demo/index.html">總覽</a>　<a href="../demo/cost.html">漲價前後</a>　<a href="../demo/quote-risk.html">毛利風險</a>　<a href="../demo/history.html">歷史報價</a>　<a href="../demo/tiers.html">數量階梯</a>　<a href="../demo/versions.html">版本差異</a>　<a href="../demo/draft.html">客戶草稿</a></p>
+<p>查詢條件：成品 P-1001、60 件、pcs、圖面版次 B、試算日 2026-12-15、目標毛利率 15%。兩種格式的歷史報價合併後，同一筆重複匯出的報價只保留一次。</p>
+<p>覆核狀態：<strong>歷史價格低於安全底線</strong>。安全底價 <strong>1,026.12</strong>（872.20 ÷ (1 − 0.15) = 1026.1176，無條件進位為 1026.12）。</p>
+<h2>每一筆歷史報價的判定</h2>
+<div class="table-scroll"><table><thead><tr><th>判定</th><th>原因</th><th>報價單號</th><th>日期</th><th>客戶代碼</th><th class="num">數量</th><th>單位</th><th class="num">單價</th></tr></thead><tbody>
+<tr><td>選入</td><td>符合全部條件</td><td>Q-2612-002</td><td>2026-12-10</td><td>C-001</td><td class="num">60.00</td><td>pcs</td><td class="num">1,050.00</td></tr>
+<tr><td>選入</td><td>符合全部條件</td><td>Q-2609-021</td><td>2026-09-15</td><td>C-003</td><td class="num">80.00</td><td>pcs</td><td class="num">1,050.00</td></tr>
+<tr><td>選入</td><td>符合全部條件</td><td>Q-2603-007</td><td>2026-03-12</td><td>C-001</td><td class="num">60.00</td><td>pcs</td><td class="num">990.00</td></tr>
+<tr><td>排除</td><td>計價單位不同（set）；數量級距不同（20，可比較範圍 30.0～120）</td><td>Q-2611-001</td><td>2026-11-10</td><td>C-005</td><td class="num">20.00</td><td>set</td><td class="num">5,200.00</td></tr>
+<tr><td>排除</td><td>不可直接比較：含稅價，不自動換算</td><td>Q-2610-031</td><td>2026-10-05</td><td>C-002</td><td class="num">50.00</td><td>pcs</td><td class="num">1,100.00</td></tr>
+<tr><td>排除</td><td>不可直接比較：幣別 USD，不換匯</td><td>Q-2610-030</td><td>2026-10-02</td><td>C-004</td><td class="num">50.00</td><td>pcs</td><td class="num">33.00</td></tr>
+<tr><td>排除</td><td>非最新版本（同單號行號有較新版本）</td><td>Q-2603-007</td><td>2026-03-05</td><td>C-001</td><td class="num">60.00</td><td>pcs</td><td class="num">1,000.00</td></tr>
+<tr><td>排除</td><td>數量級距不同（1000，可比較範圍 30.0～120）</td><td>Q-2512-009</td><td>2025-12-01</td><td>C-006</td><td class="num">1,000.00</td><td>pcs</td><td class="num">800.00</td></tr>
+<tr><td>排除</td><td>圖面版次不同（A，舊版圖面風險）</td><td>Q-2506-014</td><td>2025-06-20</td><td>C-002</td><td class="num">100.00</td><td>pcs</td><td class="num">980.00</td></tr>
+<tr><td>排除</td><td>圖面版次不同（A，舊版圖面風險）</td><td>Q-2501-001</td><td>2025-01-10</td><td>C-001</td><td class="num">50.00</td><td>pcs</td><td class="num">950.00</td></tr>
+<tr><td>排除</td><td>圖面版次不同（A，舊版圖面風險）；報價日期超過 730 天</td><td>Q-2311-003</td><td>2023-11-20</td><td>C-001</td><td class="num">50.00</td><td>pcs</td><td class="num">900.00</td></tr>
+</tbody></table></div>
+<h2>警示</h2><ul><li><strong>歷史價格低於安全底線</strong>：歷史相似案件的低價 990 低於目前安全底價 1026.12（目標毛利率 15.00%），建議不得直接沿用舊價</li><li><strong>價格單位不一致</strong>：同成品另有以 set 計價的歷史報價，已排除，不做單位換算</li><li><strong>材料漲價後仍沿用舊價</strong>：供應商調價生效日 2026-12-01 之後的報價仍是 1050，與調價前最近一筆相同；目前單件完整成本已由 836.6 增加為 872.2</li></ul>
+<p>歷史報價不是成交價；歷史證據含其他客戶的價格，在企業版中只出現在內部報告，不會出現在客戶草稿。</p>
+  </main>
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>本網站的示範資料全部是合成資料；試算結果僅供參考，不是正式報價，也不代表任何企業的真實成本。</p>
+      <p><a href="../privacy.html">隱私與安全說明</a>　<a href="../contact.html">聯絡與試用申請</a>　<a href="../install.html">安裝與使用方式</a></p>
+    </div>
+  </footer>
+</body>
+</html>

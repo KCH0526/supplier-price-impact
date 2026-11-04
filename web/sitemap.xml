@@ -4,7 +4,6 @@
   <url><loc>https://example.com/features.html</loc></url>
   <url><loc>https://example.com/industries.html</loc></url>
   <url><loc>https://example.com/tools/index.html</loc></url>
-  <url><loc>https://example.com/demo/index.html</loc></url>
   <url><loc>https://example.com/enterprise.html</loc></url>
   <url><loc>https://example.com/install.html</loc></url>
   <url><loc>https://example.com/faq.html</loc></url>
@@ -17,4 +16,11 @@
   <url><loc>https://example.com/articles/moq-pricing.html</loc></url>
   <url><loc>https://example.com/articles/historical-quotes.html</loc></url>
   <url><loc>https://example.com/articles/erp-excel-cleanup.html</loc></url>
+  <url><loc>https://example.com/demo/index.html</loc></url>
+  <url><loc>https://example.com/demo/cost.html</loc></url>
+  <url><loc>https://example.com/demo/quote-risk.html</loc></url>
+  <url><loc>https://example.com/demo/history.html</loc></url>
+  <url><loc>https://example.com/demo/tiers.html</loc></url>
+  <url><loc>https://example.com/demo/versions.html</loc></url>
+  <url><loc>https://example.com/demo/draft.html</loc></url>
 </urlset>
