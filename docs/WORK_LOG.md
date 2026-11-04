@@ -21,7 +21,13 @@
 | #17 | 歷史報價查詢與相似案件檢索（`core/quote_search.py`） | 已合併（main `b446ca6`） |
 | #18 | 建議報價與異常警示（`core/quote_advisor.py`） | 已合併（main `0a1af12`） |
 | #19 | 歷史報價頁面、覆核報告、README | 已合併（main `f7bbc56`） |
-| #20 | 對抗測試、效能、Docker 端對端、限制清單、首次客戶導入驗收表 | 已提交 PR #20（合併 SHA 由下一個 session 以 `git log --merges -1` 補記） |
+| #20 | 對抗測試、效能、Docker 端對端、限制清單、首次客戶導入驗收表 | 已合併（main `9e7eb8b`） |
+| #21 | 安全的客戶報價草稿（`core/customer_draft.py`；規格 `docs/COMMERCIAL_QUOTING_SPEC.md`） | 進行中（分支 `claude/pr21-customer-quote-draft`） |
+| #22 | 批次成本模型（兩種互斥模式） | 未開始 |
+| #23 | 數量階梯與最低報價 | 未開始 |
+| #24 | 報價版本比較 | 未開始 |
+| #25 | 報價工作台頁面、內部報告、文件 | 未開始 |
+| #26 | 最終安全、品質及交付驗收 | 未開始 |
 
 技術 MVP 已完成，以合成資料驗收。交付閘門見 `docs/RELEASE_GATE.md`。商業驗證尚未開始（見 `docs/GO_TO_MARKET.md` 第 9 節）。
 
@@ -63,5 +69,5 @@ streamlit run app.py --server.address=127.0.0.1
 
 - 雲端開發環境的 Docker build：先啟動 `dockerd`，再執行
   `docker buildx build --network host --secret id=corp_ca,src=/root/.ccr/ca-bundle.crt -t spi --load .`
-- 額度：使用者回報剩餘 US$86（2026-11-04 PR #11 開始時）、US$75（PR #16 開始時）；PR #16～#20 的實際花費未知。session 內無法讀取實際用量，所以各階段實際花費未知。
+- 額度：使用者回報剩餘 US$86（2026-11-04 PR #11 開始時）、US$75（PR #16 開始時）；US$64（PR #21 開始時）；各階段實際花費未知。session 內無法讀取實際用量，所以各階段實際花費未知。
 - `gh` CLI 只能用於搜尋；PR 操作請使用 GitHub MCP 工具。
