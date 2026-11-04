@@ -329,6 +329,29 @@ A：不會。沒有明確依據的換算會讓結果失真，所以一律列為�
 
 詳細流程見 [`docs/CUSTOMER_ONBOARDING.md`](docs/CUSTOMER_ONBOARDING.md)。
 
+### 使用「Excel 欄位對應」頁面
+
+ERP 匯出檔的欄位名稱和本工具不同時，不必手動改 Excel：
+
+1. 在左側選單點「**Excel 欄位對應**」。
+2. （可略過）載入上次儲存的對應設定 `.json`。
+3. 分別上傳 BOM、ProductCost、PriceIncrease、OpenQuotes 的來源 Excel，可以是不同檔案，也可以是同一個檔案的不同工作表。
+4. 選擇來源工作表，看前 5 列預覽，再**逐欄**選擇對應的來源欄位。所有欄位一開始都是「不對應」，系統不會自動猜測。
+5. 按「產生標準化 Excel」，系統會檢查兩件事：
+   - 必要欄位是否都有指定。
+   - 同一個來源欄位是否被重複使用。
+6. 下載 `standardized.xlsx`，把**同一個檔案**分別上傳到主頁的 ①、②、③。
+7. 下載 `field_mapping.json`，下次就能直接載入。
+
+對應時的規則：
+
+- 數值只會原樣複製。系統不換算單位或幣別、不補前導零、不把空白填成 0、不合併供應商。
+- 識別碼如果在 Excel 中是數值格式，會轉成文字並提出提醒，因為前導零可能早已遺失。
+- 每一列都保留「來源Excel列號」，方便回頭追查。
+
+範例：`samples/sample_erp_export.xlsx` 搭配 `samples/sample_field_mapping.json`，對應後的結果與三份標準範例完全相同。
+其中的欄位名稱是合成的，**不代表任何特定 ERP 的原生格式**。
+
 ---
 
 ### 專案文件
@@ -341,3 +364,4 @@ A：不會。沒有明確依據的換算會讓結果失真，所以一律列為�
 | [`docs/CUSTOMER_ONBOARDING.md`](docs/CUSTOMER_ONBOARDING.md) | 客戶導入與欄位對應流程 |
 | [`docs/GO_TO_MARKET.md`](docs/GO_TO_MARKET.md) | 目標客戶、訪談題目、待測定價 |
 | [`docs/WORK_LOG.md`](docs/WORK_LOG.md) | 開發進度交接 |
+| [`docs/RELEASE_GATE.md`](docs/RELEASE_GATE.md) | 交付閘門：已驗證／僅測試／未驗證／商業待確認 |

@@ -12,8 +12,8 @@
 | #8 | 毛利風險覆核引擎 `core/quote_risk.py` | 已合併（main `031e723`） |
 | #9 | 三檔 Streamlit、Quote Risk 報告、README、ONBOARDING、GO_TO_MARKET | 已合併（main `522090c`） |
 | #10 | 對抗測試、最終 Docker 回歸、交付紀錄 | 已合併（main `622f3bb`） |
-| #11 | 正式交付驗收：修正損毀 xlsx 造成的錯誤、Dockerfile 支援企業 CA、RELEASE_GATE | 進行中（分支 `claude/pr11-release-gate`） |
-| #12 | Excel 欄位對應器 | 未開始 |
+| #11 | 正式交付驗收：修正損毀 xlsx 造成的錯誤、Dockerfile 支援企業 CA、RELEASE_GATE | 已合併（main `62a358b`） |
+| #12 | Excel 欄位對應器（`core/field_mapper.py`、`pages/1_Excel_欄位對應.py`） | 進行中（分支 `claude/pr12-field-mapper`） |
 | #13 | 示範與銷售素材 | 未開始 |
 | #14 | 品質與效能（1k～50k 列） | 未開始 |
 | #15 | 客戶交付工具包 | 未開始 |
