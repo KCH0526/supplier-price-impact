@@ -17,8 +17,8 @@
 | #13 | 示範與銷售素材（demo/、截圖、影片、DEMO_SCRIPT、FIRST_TIME_GUIDE、ONE_PAGER、SERVICE_SCOPE） | 已合併（main `cff32c5`） |
 | #14 | 品質與效能（benchmarks/、PERFORMANCE.md、處理中提示） | 已合併（main `1d99b70`） |
 | #15 | 客戶交付工具包（`docs/delivery/` 10 份文件） | 已合併（main `cbb4564`） |
-| #16 | 歷史報價匯入與標準化（`core/historical_quotes.py`、規格 `docs/HISTORICAL_QUOTE_PRODUCT_SPEC.md`） | 進行中（分支 `claude/pr16-historical-quote-import`） |
-| #17 | 歷史報價查詢與相似案件檢索 | 未開始 |
+| #16 | 歷史報價匯入與標準化（`core/historical_quotes.py`、規格 `docs/HISTORICAL_QUOTE_PRODUCT_SPEC.md`） | 已合併（main `3735f7a`） |
+| #17 | 歷史報價查詢與相似案件檢索（`core/quote_search.py`） | 進行中（分支 `claude/pr17-similar-quote-search`） |
 | #18 | 建議報價與異常警示 | 未開始 |
 | #19 | 歷史報價頁面、覆核報告、README | 未開始 |
 | #20 | 對抗測試、效能、交付驗收 | 未開始 |
