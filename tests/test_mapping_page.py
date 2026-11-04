@@ -100,10 +100,11 @@ def test_standard_file_works_in_all_three_slots_of_the_main_page():
     _button(app).click().run()
     content = app.session_state["standard_file"]
     main = AppTest.from_file(str(ROOT / "app.py"), default_timeout=30).run()
+    main.radio(key="report_mode").set_value("客戶報價風險報告").run()
     for i in range(3):
         main.file_uploader[i].upload("standardized.xlsx", content)
     main.run()
-    next(b for b in main.button if b.label == "產生毛利風險報告").click().run()
+    next(b for b in main.button if b.label == "產生客戶報價風險報告").click().run()
     assert not main.exception
     report = main.session_state["latest_report"]
     assert report["summary"]["預估每月總成本增加"] == Decimal("61597.00")

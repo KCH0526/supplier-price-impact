@@ -29,6 +29,8 @@ MONEY = {
     # core.quote_risk, so quantizing it again cannot lower it.
     "未稅報價單價", "原完整成本", "新完整成本", "報價情境成本增加", "維持底線所需最低單價",
 }
+REPORT_TYPE_COST = "成本影響報告"
+REPORT_TYPE_RISK = "客戶報價風險報告"
 PERCENT = {"成本增加百分比", "原毛利率", "新毛利率", "設定毛利率底線"}
 QTY = {"用量", "預估月產量", "報價數量"}
 TEXT = {"成品編號", "子件料號", "供應商代碼", "報價單號", "行號", "客戶代碼"}
@@ -104,6 +106,8 @@ def build_report(matched: MatchResult, costs: CostResult, as_of: dt.date,
 
     s = costs.summary
     records = [
+        ("報告類型", REPORT_TYPE_RISK + "（含成本影響）" if quote_risk is not None
+         else REPORT_TYPE_COST + "（不含客戶報價風險）"),
         ("試算基準日", as_of.isoformat()),
         ("總成品數", s["總成品數"]),
         ("可完整試算成品數", s["可完整試算成品數"]),

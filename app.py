@@ -25,7 +25,7 @@ from core.quote_risk import (
     assess_quote_risk,
 )
 from core.reader import read_bom, read_price_increase, read_sheet
-from core.report import build_report
+from core.report import REPORT_TYPE_COST, REPORT_TYPE_RISK, build_report
 from core.validation import ERROR, validate_bom, validate_price_increase
 
 INPUT_COLUMNS = [
@@ -138,6 +138,15 @@ def main():
     with st.expander("第一次使用？看三份 Excel 要準備什麼", expanded=False):
         st.markdown(FILE_HELP)
 
+    mode = st.radio(
+        "報告類型（請先選擇）", [REPORT_TYPE_COST, REPORT_TYPE_RISK], index=None, key="report_mode", horizontal=True,
+        help=f"{REPORT_TYPE_COST}：只需 ① BOM 與 ② 供應商調價，看成品成本變化。"
+             f"{REPORT_TYPE_RISK}：另需 ③ 客戶未結報價，檢查哪些報價會低於毛利底線。")
+    if mode is None:
+        st.info("請先選擇報告類型：只看成品成本變化，或檢查客戶報價毛利風險。")
+        return
+    risk_mode = mode == REPORT_TYPE_RISK
+
     c1, c2, c3 = st.columns(3)
     with c1:
         bom_file = st.file_uploader("① BOM／成本 Excel", type=["xlsx"], key="bom",
@@ -145,9 +154,11 @@ def main():
     with c2:
         quote_file = st.file_uploader("② 供應商調價 Excel", type=["xlsx"], key="quote",
                                       help="工作表 PriceIncrease：哪些料號漲價、新單價、從哪天生效。")
-    with c3:
-        open_quote_file = st.file_uploader("③ 客戶未結報價 Excel（建議）", type=["xlsx"], key="open_quotes",
-                                           help="工作表 OpenQuotes：還有效的客戶報價。不上傳時只產出成本影響。")
+    open_quote_file = None
+    if risk_mode:
+        with c3:
+            open_quote_file = st.file_uploader("③ 客戶未結報價 Excel（必要）", type=["xlsx"], key="open_quotes",
+                                               help="工作表 OpenQuotes：還有效的客戶報價。")
     d1, d2 = st.columns(2)
     with d1:
         as_of = st.date_input("試算基準日", value=dt.date(2026, 12, 1),
@@ -159,7 +170,11 @@ def main():
     min_margin = Decimal(str(floor_pct)) / 100
 
     if bom_file is None or quote_file is None:
-        st.info("請至少上傳 ① BOM 與 ② 供應商調價；要檢查客戶報價毛利，請再上傳 ③。")
+        st.info("請上傳 ① BOM 與 ② 供應商調價。")
+        return
+    if risk_mode and open_quote_file is None:
+        st.warning(f"{REPORT_TYPE_RISK}需要 ③ 客戶未結報價 Excel；上傳完成前不會產生報告。"
+                   f"只要看成品成本變化，請改選「{REPORT_TYPE_COST}」。")
         return
 
     bom_bytes, quote_bytes = bom_file.getvalue(), quote_file.getvalue()
@@ -183,16 +198,16 @@ def main():
     edited_costs = product_inputs(bom.data, bom_bytes)
 
     # Hide old results as soon as any input or assumption changes.
-    digest = hashlib.sha256(bom_bytes + quote_bytes + open_bytes + as_of.isoformat().encode()
+    digest = hashlib.sha256(mode.encode() + bom_bytes + quote_bytes + open_bytes + as_of.isoformat().encode()
                             + str(min_margin).encode()
                             + edited_costs.to_json(orient="records").encode()).hexdigest()
-    if st.button("產生毛利風險報告", type="primary", width="stretch"):
+    if st.button(f"產生{mode}", type="primary", width="stretch"):
         try:
             # Large files (tens of thousands of BOM lines) can take ~40 seconds.
             with st.spinner("報告產生中，資料量大時可能需要約一分鐘，請勿重複點擊…"):
                 matched = match_prices(bom.data, quote.data, as_of)
                 calculated = calculate_cost_impact(matched, edited_costs)
-                risk = assess_quote_risk(open_quotes.data, calculated, as_of, min_margin) if open_quotes else None
+                risk = assess_quote_risk(open_quotes.data, calculated, as_of, min_margin) if risk_mode else None
                 content = build_report(matched, calculated, as_of, risk)
         except Exception as exc:
             st.error(f"無法產出報告：{exc}")
@@ -206,6 +221,9 @@ def main():
     if not report or report["fingerprint"] != digest:
         return
 
+    st.subheader(f"報告類型：{mode}")
+    if not risk_mode:
+        st.caption(f"此報告只含成品成本影響，不含客戶報價風險。要檢查客戶報價毛利，請改選「{REPORT_TYPE_RISK}」並上傳 ③。")
     risk = report["risk"]
     if risk is not None:
         st.subheader("客戶報價毛利風險摘要")
