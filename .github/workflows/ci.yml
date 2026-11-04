@@ -9,6 +9,7 @@ permissions:
   contents: read
 
 jobs:
+  # Required status check for main. Keep the job name "test".
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -17,11 +18,65 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Install dependencies
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"   # tests/test_web_calculators.py runs web/assets/calculators.js in Node
+      - name: Install dependencies (locked)
         run: python -m pip install -r requirements-lock.txt
       - name: Run full test suite (Streamlit test must not be skipped)
         shell: bash
         run: |
           set -o pipefail
-          python -m pytest -q -rs | tee pytest.log
+          python -m pytest -q -rs --junitxml=pytest-junit.xml | tee pytest.log
           if grep -qi "skipped" pytest.log; then echo "::error::A test was skipped"; exit 1; fi
+      - name: Report counts
+        if: always()
+        run: python tools/ci_report.py pytest-junit.xml "Ubuntu"
+
+  # Installation and full test suite on GitHub-hosted Windows and macOS runners.
+  # This is runner evidence only; it is NOT a test on a customer's own computer or Docker Desktop.
+  test-cross-os:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Record environment
+        shell: bash
+        run: |
+          python -VV
+          node --version
+          python -m pip --version
+      - name: Install dependencies (locked)
+        shell: bash
+        run: |
+          set -o pipefail
+          python -m pip install -r requirements-lock.txt 2>&1 | tee pip-install.log
+          python -m pip freeze > pip-freeze.txt
+          cat pip-freeze.txt
+      - name: Run full test suite
+        shell: bash
+        run: python -m pytest -q -rs --junitxml=pytest-junit.xml
+      - name: Report counts (fails on any failure, error or skip)
+        if: always()
+        shell: bash
+        run: python tools/ci_report.py pytest-junit.xml "${{ runner.os }}"
+      - name: Keep evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: evidence-${{ runner.os }}
+          path: |
+            pytest-junit.xml
+            pip-install.log
+            pip-freeze.txt
+          retention-days: 30
