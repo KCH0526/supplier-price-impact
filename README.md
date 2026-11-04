@@ -722,7 +722,7 @@ python -m http.server 8000 --bind 127.0.0.1 --directory web
 
 然後開啟 `http://127.0.0.1:8000`。
 
-是否公開部署、使用哪個網域與託管平台，需要由你決定並授權（見 `docs/PUBLIC_LAUNCH_DECISION.md`）。
+是否公開部署、使用哪個網域與託管平台，需要由你決定並授權（見 `docs/PUBLIC_LAUNCH_DECISION.md`、`docs/launch/USER_DECISIONS.md`）。上線準備文件都在 `docs/launch/`。
 
 ### 專案文件
 

@@ -31,8 +31,8 @@
 | #27 | 報告類型明確化（成本影響／客戶報價風險）、草稿與正式報價單區分、流程與文件整理 | 已合併（main `097fdfa`） |
 | #28 | 公開入口與商業化決策（`docs/PUBLIC_LAUNCH_DECISION.md`） | 已合併（main `6723618`） |
 | #29 | 公開繁體中文靜態網站（`web/`、`web_src/`）與 4 個瀏覽器內計算器 | 已合併（main `60faf9f`） |
-| #30 | 公開合成資料 Demo（`web_src/demo_content.py` 預先產生 `web/demo/`，無上傳） | 進行中（分支 `claude/public-demo`） |
-| #31 | 商業化與上線驗收文件 | 未開始 |
+| #30 | 公開合成資料 Demo（`web_src/demo_content.py` 預先產生 `web/demo/`，無上傳） | 已合併（main `b05f699`） |
+| #31 | 商業化與上線驗收文件（`docs/launch/` 13 份） | 已提交 PR #31（合併後請補記 SHA） |
 
 技術 MVP 已完成，以合成資料驗收。交付閘門見 `docs/RELEASE_GATE.md`。商業驗證尚未開始（見 `docs/GO_TO_MARKET.md` 第 9 節）。
 
@@ -54,6 +54,11 @@ streamlit run app.py --server.address=127.0.0.1
 ## 編號說明
 
 使用者在任務中以「PR #27～#30」稱呼公開入口的四個階段；因 #27 已用於可靠性強化，實際編號為 #28～#31。
+
+## 公開入口現況（PR #28～#31）
+
+- `web/` 公開靜態網站與 `web/demo/` 合成資料 Demo 已完成，**尚未部署**。
+- 部署、網域、託管、廣告、金流、聯絡方式都需要使用者決定並授權，見 `docs/launch/USER_DECISIONS.md`。
 
 ## 分支保護（需要 repository 管理者操作）
 
