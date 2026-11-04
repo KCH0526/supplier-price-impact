@@ -2,7 +2,8 @@
 
     python benchmarks/run_benchmark.py 1000 10000 20000 50000
 
-Each size runs in a fresh subprocess so peak memory (ru_maxrss) is per size.
+Each size runs in a fresh subprocess so peak memory is per size (Linux/macOS: ru_maxrss;
+Windows: PeakWorkingSetSize).
 N = number of BOM lines; the price file has N/2 rows and OpenQuotes N/10 rows
 (both capped at the 50,000-row sheet limit). Data is fully synthetic.
 """
@@ -13,7 +14,6 @@ import datetime as dt
 import io
 import json
 import platform
-import resource
 import subprocess
 import sys
 import time
@@ -60,6 +60,31 @@ def make_inputs(n: int) -> tuple[bytes, bytes, bytes]:
     return bom, price, quotes
 
 
+def peak_rss_mb() -> float:
+    """Peak resident memory of this process in MB, standard library only, on Linux, macOS and Windows."""
+    if sys.platform == "win32":
+        import ctypes
+        from ctypes import wintypes
+
+        class Counters(ctypes.Structure):
+            _fields_ = [("cb", wintypes.DWORD), ("PageFaultCount", wintypes.DWORD),
+                        ("PeakWorkingSetSize", ctypes.c_size_t), ("WorkingSetSize", ctypes.c_size_t),
+                        ("QuotaPeakPagedPoolUsage", ctypes.c_size_t), ("QuotaPagedPoolUsage", ctypes.c_size_t),
+                        ("QuotaPeakNonPagedPoolUsage", ctypes.c_size_t), ("QuotaNonPagedPoolUsage", ctypes.c_size_t),
+                        ("PagefileUsage", ctypes.c_size_t), ("PeakPagefileUsage", ctypes.c_size_t)]
+        c = Counters()
+        c.cb = ctypes.sizeof(c)
+        get_info = ctypes.WinDLL("psapi").GetProcessMemoryInfo
+        get_info.argtypes = [wintypes.HANDLE, ctypes.POINTER(Counters), wintypes.DWORD]
+        if not get_info(ctypes.windll.kernel32.GetCurrentProcess(), ctypes.byref(c), c.cb):
+            raise OSError("GetProcessMemoryInfo failed")
+        return round(c.PeakWorkingSetSize / 1024 / 1024, 1)
+    import resource
+    peak = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    # ru_maxrss is in bytes on macOS and in kilobytes on Linux.
+    return round(peak / 1024 / 1024 if sys.platform == "darwin" else peak / 1024, 1)
+
+
 def run_once(n: int) -> dict:
     from decimal import Decimal
 
@@ -88,7 +113,7 @@ def run_once(n: int) -> dict:
         "bytes_in": len(bom_b) + len(price_b) + len(quote_b),
         "seconds": {k: round(v, 2) for k, v in t.items()},
         "total_seconds": round(sum(t.values()), 2),
-        "peak_rss_mb": round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024, 1),
+        "peak_rss_mb": peak_rss_mb(),
         "report_mb": round(len(report) / 1024 / 1024, 2),
         "complete_products": costs.summary["可完整試算成品數"],
         "products": costs.summary["總成品數"],
