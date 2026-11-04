@@ -24,6 +24,13 @@ docker compose up --build
 - `docker-compose.yml` 只把服務發布在 `127.0.0.1:8501`。
   **不要**改成 `8501:8501` 或 `0.0.0.0:8501:8501`，否則同網段任何人都能連線。
 - 若手動使用 `docker run`，請寫成 `-p 127.0.0.1:8501:8501`。
+- 公司網路若有 SSL 檢查 proxy（pip 出現 `CERTIFICATE_VERIFY_FAILED`），請向 IT 取得公司 CA 憑證，
+  並以 build secret 傳入。憑證只在安裝套件時掛載，**不會**寫進映像：
+
+```bash
+docker build --secret id=corp_ca,src=/path/to/company-ca.crt -t supplier-quote-margin-guard .
+docker run --rm -p 127.0.0.1:8501:8501 supplier-quote-margin-guard
+```
 
 ## 3. 上傳與報告驗證
 
@@ -70,20 +77,25 @@ docker compose up --build
 | 2026-11-03 | Docker build 與啟動 | Docker 29.9.2；build 時另加 proxy CA（雲端開發環境限制，見下） | 成功；容器內 pytest 137 passed；以 uid 10001 執行；只綁 127.0.0.1 |
 | 2026-11-03 | 容器內瀏覽器實測 | 同上 | 成功；61,597、40 列；容器內未留下上傳的 xlsx |
 | 2026-11-03 | 啟動時外部 IP 查詢 | 容器（綁 0.0.0.0） | 修正前會查 checkip.amazonaws.com；修正後不再查詢 |
-
-Docker 驗證說明：開發用雲端環境的 HTTPS 經過一個需額外信任 CA 的 proxy，
-所以驗證時是用一份**只多了「pip 安裝時信任該 CA」一步**的 Dockerfile 副本建置，
-repo 內的 `Dockerfile` 未加入該步驟。一般企業網路可直接 `docker compose up --build`；
-若企業本身也有 SSL 檢查 proxy，需由 IT 提供 CA 憑證。
-
 | 2026-11-03 | 三檔流程瀏覽器實測（BOM＋調價＋OpenQuotes） | Python 3.11.18，本機 Streamlit，Chromium | 成功；6 個工作表；需人工覆核 3 筆；情境合計 6,480.50；月成本 61,597；瀏覽器端外部請求 0 筆 |
 | 2026-11-03 | 「Deploy」按鈕 | 同上 | 已隱藏（頁面上數量 0） |
 | 2026-11-03 | 最終回歸：Docker 重建＋容器內 pytest＋三檔瀏覽器流程 | Docker 29.9.2，映像 python:3.11-slim（另加 proxy CA，見下） | 容器內 234 passed；案例 A 16.34%／12.78%／1,026.12／1,780／需人工覆核；61,597；Line Audit 40 列；匯出檔 0 個公式；容器內沒有寫入任何 xlsx；啟動時未查詢外部 IP |
+| 2026-11-04 | 完整 pytest（PR #11） | Python 3.11.18（venv），Streamlit 1.66.1 | 243 passed、0 failed、0 skipped |
+| 2026-11-04 | **repo 原始 Dockerfile** build | Docker 29.9.2；以 `--secret id=corp_ca` 傳入 proxy CA（不寫入映像） | 成功；映像內無 `/run/secrets`、`/app` 內無憑證；uid 10001 |
+| 2026-11-04 | 容器內三檔瀏覽器流程 | 同上，Chromium | 6 個工作表；6 款成品 0 差異；Line Audit 40 列一致；61,597；需人工覆核 3／尚符合 4／不納入 1；情境合計 6,480.50；案例 A 16.34%／12.78%／1,026.12；0 個公式；瀏覽器外部請求 0 筆；容器內未寫入 xlsx；啟動未查詢外部 IP |
+| 2026-11-04 | 上傳大小上限 | 同上，上傳 22 MB 檔案 | 前端拒絕：「File must be 20.0MB or smaller」 |
+| 2026-11-04 | 損毀 xlsx（數值儲存格內為文字） | Python 3.11.18 | 修正前 `read_bom` 拋出 `ValueError`（畫面會出現錯誤堆疊）；修正後成為阻擋例外 |
+
+Docker 驗證說明：
+
+- 2026-11-03 的紀錄是用一份多了「信任 proxy CA」步驟的 Dockerfile **副本**建置的。
+- 自 2026-11-04（PR #11）起，repo 的 Dockerfile 支援以 build secret 傳入 CA，所以改為直接用 **repo 原始 Dockerfile** 建置驗證。
+- 沒有傳入 secret 時，建置行為與一般 `pip install` 相同；但這種情況下，一般網路的建置在本開發環境無法重現（見第 7 節）。
 
 ## 7. 尚未實際驗證
 
 - 在客戶公司電腦或內網伺服器（Windows／macOS Docker Desktop）上的實際啟動。
-- 使用 repo 原始 `Dockerfile`（未加 CA 步驟）在一般網路的建置。
+- 使用 repo 原始 `Dockerfile`、**不傳入 CA**、在沒有 SSL 檢查 proxy 的一般網路建置（本開發環境一定經過 proxy，無法重現）。
 - 反向代理／HTTPS 配置。
 - 真實企業 ERP 匯出檔（目前只有合成資料）。
 - 50,000 列附近的效能：20,000 列 BOM 實測約讀取 3 秒、配對 1 秒、計算 1 秒、報告 16 秒。

@@ -158,6 +158,10 @@ def read_sheet(source: Source, sheet_name: str, required_columns: list[str]) -> 
                 raw = values[idx] if idx < len(values) else None
                 record[name] = _clean(raw, name)
             records.append(record)
+    except Exception as exc:  # noqa: BLE001 - openpyxl parses lazily while iterating rows
+        return SheetResult(None, [Issue(
+            sheet_name, None, None, f"工作表「{sheet_name}」內容損毀，無法讀取：{exc}", ERROR,
+        )])
     finally:
         wb.close()
 
