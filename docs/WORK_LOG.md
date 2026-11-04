@@ -22,8 +22,8 @@
 | #18 | 建議報價與異常警示（`core/quote_advisor.py`） | 已合併（main `0a1af12`） |
 | #19 | 歷史報價頁面、覆核報告、README | 已合併（main `f7bbc56`） |
 | #20 | 對抗測試、效能、Docker 端對端、限制清單、首次客戶導入驗收表 | 已合併（main `9e7eb8b`） |
-| #21 | 安全的客戶報價草稿（`core/customer_draft.py`；規格 `docs/COMMERCIAL_QUOTING_SPEC.md`） | 進行中（分支 `claude/pr21-customer-quote-draft`） |
-| #22 | 批次成本模型（兩種互斥模式） | 未開始 |
+| #21 | 安全的客戶報價草稿（`core/customer_draft.py`；規格 `docs/COMMERCIAL_QUOTING_SPEC.md`） | 已合併（main `ad9b298`） |
+| #22 | 批次成本模型（`core/batch_cost.py`，兩種互斥模式） | 進行中（分支 `claude/pr22-batch-cost`） |
 | #23 | 數量階梯與最低報價 | 未開始 |
 | #24 | 報價版本比較 | 未開始 |
 | #25 | 報價工作台頁面、內部報告、文件 | 未開始 |

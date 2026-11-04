@@ -51,7 +51,7 @@ def errors(issues):
 # ---------- schema ----------
 
 def test_targets_cover_all_standard_sheets_with_existing_required_columns():
-    assert set(TARGETS) == {"BOM", "ProductCost", "PriceIncrease", "OpenQuotes", "HistoricalQuotes"}
+    assert set(TARGETS) == {"BOM", "ProductCost", "PriceIncrease", "OpenQuotes", "HistoricalQuotes", "BatchCost"}
     assert TARGETS["BOM"].required == ["成品編號", "成品名稱", "子件料號", "子件名稱", "單位", "用量", "原單價"]
     assert TARGETS["PriceIncrease"].required == ["子件料號", "子件名稱", "單位", "幣別", "新單價", "生效日"]
     assert TARGETS["OpenQuotes"].required[:2] == ["報價單號", "行號"]

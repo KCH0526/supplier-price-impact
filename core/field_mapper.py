@@ -63,6 +63,12 @@ TARGETS: dict[str, TargetSchema] = {
     ]),
     "OpenQuotes": TargetSchema(QUOTE_REQUIRED_COLUMNS, ["客戶名稱"]),
     # Historical quotes (docs/HISTORICAL_QUOTE_PRODUCT_SPEC.md section 3).
+    # Batch cost (docs/COMMERCIAL_QUOTING_SPEC.md section 3).
+    "BatchCost": TargetSchema(
+        ["成品編號", "成本基準日", "幣別", "單位", "單件材料變動成本", "單件人工變動成本", "單件製造費用",
+         "單件委外加工費", "每批開機設定費", "每批換線治具費", "其他批次固定費", "成本來源", "成本完整性狀態"],
+        ["規格圖面版次"],
+    ),
     "HistoricalQuotes": TargetSchema(
         ["報價單號", "報價行號", "報價日期", "客戶代碼", "成品編號", "報價數量", "計價單位", "幣別", "報價單價", "稅別"],
         ["報價版本", "成品名稱", "規格圖面版次", "材質", "製程類別", "報價狀態", "成交狀態", "交期", "備註"],
