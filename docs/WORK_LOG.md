@@ -27,7 +27,8 @@
 | #23 | 數量階梯與最低報價（`core/quantity_tiers.py`） | 已合併（main `e68f5a9`） |
 | #24 | 報價版本比較（`core/quote_versions.py`） | 已合併（main `aeb6220`） |
 | #25 | 報價工作台頁面（`pages/3_報價工作台.py`）、內部報告、文件 | 已合併（main `51e18c7`）※ 合併時 CI 尚在執行，事後確認 CI 通過（見下方紀錄） |
-| #26 | 最終安全、品質及交付驗收（對抗測試、Docker、試用工具包） | 已提交 PR #26（合併 SHA 由下一個 session 補記） |
+| #26 | 最終安全、品質及交付驗收（對抗測試、Docker、試用工具包） | 已合併（main `412547b`） |
+| #27 | 報告類型明確化（成本影響／客戶報價風險）、草稿與正式報價單區分、流程與文件整理 | 已提交 PR #27（合併後請補記 SHA） |
 
 技術 MVP 已完成，以合成資料驗收。交付閘門見 `docs/RELEASE_GATE.md`。商業驗證尚未開始（見 `docs/GO_TO_MARKET.md` 第 9 節）。
 
@@ -45,6 +46,19 @@ streamlit run app.py --server.address=127.0.0.1
 - `docs/IMPLEMENTATION_SPEC.md`
 - `samples/sample_bom.xlsx`、`samples/sample_price_increase.xlsx`、`samples/sample_open_quotes.xlsx`
 - `tests/fixtures/` 內全部檔案
+
+## 分支保護（需要 repository 管理者操作）
+
+本開發環境的 GitHub 工具無法讀取或修改分支保護，`gh` CLI 也只允許用於搜尋，所以 PR #27 **沒有**設定分支保護。請在 GitHub 上操作：
+
+1. 進入 repository → **Settings** → **Rules → Rulesets**（或 **Branches → Add branch protection rule**）。
+2. 目標分支：`main`。
+3. 勾選 **Require a pull request before merging**。
+4. 勾選 **Require status checks to pass**，加入必要檢查 **`test`**（workflow `CI` 中的 job 名稱）；建議同時勾選 **Require branches to be up to date before merging**。
+5. 勾選 **Block force pushes**（Rulesets）或保持 **Allow force pushes** 未勾選（傳統分支保護）。
+6. 保持 **Allow deletions** 未勾選。
+
+設定完成後，即使有人在 CI 完成前送出合併，GitHub 也會拒絕。
 
 ## 流程異常紀錄
 
