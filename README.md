@@ -588,4 +588,5 @@ ERP 匯出檔的欄位名稱和本工具不同時，不必手動改 Excel：
 | [`docs/GO_TO_MARKET.md`](docs/GO_TO_MARKET.md) | 目標客戶、訪談題目、待測定價 |
 | [`docs/WORK_LOG.md`](docs/WORK_LOG.md) | 開發進度交接 |
 | [`docs/HISTORICAL_QUOTE_PRODUCT_SPEC.md`](docs/HISTORICAL_QUOTE_PRODUCT_SPEC.md) | 歷史報價記憶庫與建議報價規格、設計審查 |
+| [`docs/LIMITATIONS.md`](docs/LIMITATIONS.md) | 實際限制清單 |
 | [`docs/RELEASE_GATE.md`](docs/RELEASE_GATE.md) | 交付閘門：已驗證／僅測試／未驗證／商業待確認 |

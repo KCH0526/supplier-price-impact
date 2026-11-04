@@ -20,8 +20,8 @@
 | #16 | 歷史報價匯入與標準化（`core/historical_quotes.py`、規格 `docs/HISTORICAL_QUOTE_PRODUCT_SPEC.md`） | 已合併（main `3735f7a`） |
 | #17 | 歷史報價查詢與相似案件檢索（`core/quote_search.py`） | 已合併（main `b446ca6`） |
 | #18 | 建議報價與異常警示（`core/quote_advisor.py`） | 已合併（main `0a1af12`） |
-| #19 | 歷史報價頁面、覆核報告、README | 進行中（分支 `claude/pr19-quote-memory-ui`） |
-| #20 | 對抗測試、效能、交付驗收 | 未開始 |
+| #19 | 歷史報價頁面、覆核報告、README | 已合併（main `f7bbc56`） |
+| #20 | 對抗測試、效能、Docker 端對端、限制清單、首次客戶導入驗收表 | 已提交 PR #20（合併 SHA 由下一個 session 以 `git log --merges -1` 補記） |
 
 技術 MVP 已完成，以合成資料驗收。交付閘門見 `docs/RELEASE_GATE.md`。商業驗證尚未開始（見 `docs/GO_TO_MARKET.md` 第 9 節）。
 
@@ -42,9 +42,9 @@ streamlit run app.py --server.address=127.0.0.1
 
 ## PR 連結
 
-#6～#15：https://github.com/KCH0526/supplier-price-impact/pull/6 至 /pull/15（編號依序）。
+#6～#20：https://github.com/KCH0526/supplier-price-impact/pull/6 至 /pull/20（編號依序）。
 
-## 已知限制（截至 PR #15）
+## 已知限制（截至 PR #20；完整清單見 `docs/LIMITATIONS.md`）
 
 - 只用合成資料驗收；沒有任何真實客戶資料、訪談或成交紀錄。
 - 只支援單階 BOM、單一工廠與版本、TWD、每件計價；欄位對應不支援合併欄位或常數欄位。
@@ -63,5 +63,5 @@ streamlit run app.py --server.address=127.0.0.1
 
 - 雲端開發環境的 Docker build：先啟動 `dockerd`，再執行
   `docker buildx build --network host --secret id=corp_ca,src=/root/.ccr/ca-bundle.crt -t spi --load .`
-- 額度：使用者回報剩餘 US$86（2026-11-04 PR #11 開始時）、US$75（PR #16 開始時）。session 內無法讀取實際用量，所以各階段實際花費未知。
+- 額度：使用者回報剩餘 US$86（2026-11-04 PR #11 開始時）、US$75（PR #16 開始時）；PR #16～#20 的實際花費未知。session 內無法讀取實際用量，所以各階段實際花費未知。
 - `gh` CLI 只能用於搜尋；PR 操作請使用 GitHub MCP 工具。
