@@ -12,6 +12,7 @@
 | `core/` | 讀取、驗證、配對、成本計算、報價風險、歷史報價、批次成本、數量階梯、版本比較、客戶草稿、RFQ、案件資料庫、實際成本回饋、報告產生 |
 | `requirements.txt`、`requirements-lock.txt` | 直接依賴與完整鎖定版本 |
 | `start_windows.bat`、`start_macos.command`、`tools/check_env.py` | 啟動與環境檢查 |
+| `tools/build_release.py` | 以允許清單產生企業單機版交付包（輸出到 `dist/`，不提交到 Git） |
 | `.streamlit/config.toml` | 只綁定本機、關閉使用統計、上傳大小限制 |
 | `Dockerfile`、`docker-compose.yml`、`.dockerignore` | 容器化執行（只發布在 127.0.0.1） |
 | `.gitignore`、`.gitattributes` | 排除資料庫與備份；固定啟動腳本換行格式 |
@@ -70,3 +71,6 @@
 | `docs/launch/`、`web/`、`web_src/` | 公開網站目前不在交付範圍 | 若確定不做網站，可另開 PR 封存；刪除前需一併移除相關測試 |
 | `benchmarks/run_quote_memory_benchmark.py` | 只被 `docs/PERFORMANCE.md` 引用，沒有測試執行 | 保留作為效能重測工具 |
 | `docs/media/demo_walkthrough.webm`（約 1.3 MB） | 早期錄製，未包含報價工作台與案件工作台 | 之後可重新錄製 |
+
+## 8. 最終收尾時的重新檢查
+重新檢查第 7 節的待確認項目，結果相同：每個檔案都仍被程式、測試或文件引用，**沒有可以安全刪除的檔案，所以沒有刪除任何檔案**。`web/`、`web_src/` 依指示保留。交付給企業的內容改由 `tools/build_release.py` 以允許清單產生，內部文件不會進入交付包，因此不需要為了交付而刪除 repository 中的檔案。

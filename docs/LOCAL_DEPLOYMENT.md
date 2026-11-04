@@ -30,7 +30,7 @@ py -3.11 -m venv .venv
 - 全程**直接執行 `.venv\Scripts\python.exe`**，不需要「啟用」虛擬環境，也**不需要修改 PowerShell 執行原則或任何系統安全設定**。
 - `py -3.11 --version` 出現「找不到」或版本不是 3.11.x：請從 python.org 安裝 Python 3.11（安裝畫面勾選「Add python.exe to PATH」），關閉並重新開啟視窗後再試。
 - 安裝路徑可以有中文或空白（例如 `C:\Users\王小明\報價 工具`）。在指令中手動輸入這種路徑時，請用英文雙**引號**括起來，例如 `cd "C:\Users\王小明\報價 工具"`。
-- 想確認安裝完整，可再執行 `.venv\Scripts\python.exe -m pytest -q -rs`；結果必須是 0 failed、0 skipped（約需 1 分鐘）。
+- 從原始碼專案安裝時（交付包不含測試），可再執行 `.venv\Scripts\python.exe -m pytest -q -rs`；結果必須是 0 failed、0 skipped（約需 1 分鐘）。
 
 **日常啟動與再次啟動**：在檔案總管中雙擊 `start_windows.bat`。它會先執行環境檢查，再啟動系統，並在視窗中顯示要開啟的網址。
 - 要關閉程式：在該視窗按 Ctrl+C，或直接關閉視窗。之後想**再次啟動**，再雙擊 `start_windows.bat` 即可。資料庫與備份都不會因為關閉程式而消失。
@@ -49,7 +49,7 @@ python3.11 -m venv .venv
 
 - `python3.11: command not found`：請從 python.org 下載 Python 3.11 的 macOS 安裝程式，安裝後重新開啟終端機再試。
 - 路徑含中文或空白時，請用雙**引號**括起來，例如 `cd "$HOME/報價 工具"`。
-- 可再執行 `.venv/bin/python -m pytest -q -rs` 確認：0 failed、0 skipped。
+- 從原始碼專案安裝時（交付包不含測試），可再執行 `.venv/bin/python -m pytest -q -rs` 確認：0 failed、0 skipped。
 
 **日常啟動與再次啟動**：在 Finder 中雙擊 `start_macos.command`。第一次若出現「無法打開，因為無法驗證開發者」，請按右鍵 →「打開」→「打開」；這只允許這一個檔案，不會改變系統設定。
 - 要關閉程式：在終端機視窗按 Control+C，再關閉視窗。之後想**再次啟動**，再雙擊 `start_macos.command` 即可。
@@ -103,7 +103,7 @@ docker run -d --name spi -p 127.0.0.1:8501:8501 -v /path/to/case_data:/data supp
 - 內部稽核報告含成本與實際成本；只有「客戶報價草稿」可以給客戶。
 
 ## 7. 安裝後驗收（每台電腦第一次安裝時做一次）
-1. `python -m pytest -q -rs`：0 failed、0 skipped。
+1. 執行 `tools/check_env.py`，全部顯示 `[OK]`；從原始碼專案安裝時，另執行 `python -m pytest -q -rs`：0 failed、0 skipped。
 2. 開啟「案件工作台」，確認預設顯示「資料保存未啟用」。
 3. 啟用保存，路徑填一個**測試用**資料庫（例如 `D:\報價資料\test_cases.db`），上傳 `samples/rfq/rfq_sample.xlsx`，填原因並保存，應顯示「已保存」。
 4. 選擇 `C-001|RFQ-2612-001|v1`：狀態改為待人工覆核；新增報價版本（單價 300、數量 100、預估單位成本 200）；回填成交、數量 100、實際總成本 22500。差異表應顯示預估 33.33%、實際 25.00%、下降 8.33 個百分點。
@@ -128,7 +128,7 @@ docker run -d --name spi -p 127.0.0.1:8501:8501 -v /path/to/case_data:/data supp
 2. 確認備份檢查結果為「完整」，並把該備份另外複製到加密的外接硬碟。
 3. 關閉程式（終端機按 Ctrl+C；Docker 執行 `docker stop spi`）。
 4. **保留舊的程式資料夾**（例如改名為 `supplier-price-impact_舊版`），把新版放到新的資料夾。
-5. 在新版資料夾重新建立 `.venv` 並執行 `python -m pip install -r requirements-lock.txt` 與 `python -m pytest -q -rs`（Docker 則重新 `docker build`）。
+5. 在新版資料夾重新建立 `.venv` 並執行 `python -m pip install -r requirements-lock.txt` 與 `tools/check_env.py`（原始碼專案另可執行 `python -m pytest -q -rs`；Docker 則重新 `docker build`）。
 6. 啟動新版，指向原本的資料庫路徑。若新版需要升級資料結構，開啟時會自動升級；升級失敗會回滾，資料維持原狀。
 7. 新版有問題時：關閉新版，改用舊版資料夾啟動。若資料庫已被新版升級，舊版會拒絕開啟（「請更新程式」），此時用第 1 步的「更新前」備份還原到**新的路徑**再以舊版開啟。
 
@@ -203,3 +203,30 @@ docker run -d --name spi -p 127.0.0.1:8501:8501 -v /path/to/case_data:/data supp
 - 沒有排程或異地備份。
 - SQLite 沒有加密。
 - 稽核紀錄的操作人未經身分驗證，紀錄也無法防竄改。
+
+## 15. 企業單機版交付包
+交付包是一個 ZIP 檔，只包含執行與操作需要的檔案，不是整個原始碼專案。
+
+**內容**：
+- 程式（`app.py`、`pages/`、`core/`）、`.streamlit/config.toml`、`requirements.txt`、`requirements-lock.txt`
+- `start_windows.bat`、`start_macos.command`、`tools/check_env.py`、Docker 設定
+- README、使用手冊、第一次使用教學與驗收清單、本機部署、部署驗收清單、限制清單、客戶導入流程、最終交付報告、文件截圖
+- `samples/` 合成範例、`demo/` 範例報告
+- `MANIFEST.sha256`：每個檔案的 SHA-256
+
+**不包含**：測試、開發紀錄與內部規劃文件、網站原始碼與上線草稿、任何資料庫、備份、憑證或客戶資料。文件中指向內部文件的連結，在交付包中會改為純文字並標示「內部文件，未包含在交付包」。
+
+**產生**（在原始碼專案中，以 Python 3.11 執行；只用標準函式庫）：
+
+```bash
+python tools/build_release.py --version 1.0.0
+```
+
+- 產生 `dist/SupplierPriceImpact-1.0.0.zip`，並顯示 ZIP 的 SHA-256。
+- 同樣的原始碼與版本號會產生**位元組完全相同**的 ZIP，可用 SHA-256 比對。
+- `dist/` 不提交到 Git；需要時依版本重新產生。
+
+**驗證與安裝**：
+1. 把 ZIP 解壓到本機資料夾（路徑可以有中文或空白）。
+2. 需要檢查檔案是否完整時，在解壓後的資料夾，依 `MANIFEST.sha256` 用作業系統內建工具比對：macOS 執行 `shasum -a 256 -c MANIFEST.sha256`（每一行都應顯示 OK）；Windows 可用 `certutil -hashfile <檔名> SHA256` 逐檔比對。
+3. 之後依第 2 節（Windows）或第 3 節（macOS）安裝，並執行 `tools/check_env.py`。

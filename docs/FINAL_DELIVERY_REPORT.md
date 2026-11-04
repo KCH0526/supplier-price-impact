@@ -32,6 +32,13 @@
 
 GitHub-hosted runner 是乾淨的雲端虛擬機，通過測試**不代表**已在客戶的實體電腦上驗證。
 
+### 企業單機版交付包
+- 以 `python tools/build_release.py --version <版本>` 產生 ZIP：共 68 個檔案，另加 `MANIFEST.sha256`。採允許清單，不含測試、內部文件、網站、資料庫、備份與憑證。
+- 同樣的原始碼與版本號會產生位元組完全相同的 ZIP；`sha256sum -c MANIFEST.sha256` 全部通過。
+- 解壓到含中文與空白的路徑後：所有模組都從解壓目錄匯入，合成範例可以讀取，環境檢查可以執行；`.bat` 為 CRLF，`.command` 保留執行權限；文件中沒有指向交付包外的連結。
+- 從解壓目錄實際啟動：只監聽 127.0.0.1（從非本機 IP 連線被拒絕）。案件工作台的瀏覽器流程（保存、狀態、報價、成交、備份、拒絕未確認的還原、還原）通過。
+- 已知的測試工具限制：瀏覽器自動化工具從「含中文與空白的路徑」上傳範例檔時逾時。改從 repository 路徑上傳同一個檔案（內容逐位元組相同）則通過。伺服器只接收檔案內容與檔名，因此判斷是自動化工具的問題，但原因尚未查明；也還沒有由真人在 Windows／macOS 上用瀏覽器手動上傳驗證。
+
 ## C. 備份與還原證據
 - 以合成 RFQ 建立 4 個案件、2 個報價版本、4 次狀態變更、成交與實際成本，接著備份 → 修改 → 還原；還原後逐表、逐列與備份完全一致。
 - 資料夾名稱含 `#`、`?`、`%`、空白、繁體中文時，備份、完整性檢查與還原都正確。
@@ -64,6 +71,7 @@ GitHub-hosted runner 是乾淨的雲端虛擬機，通過測試**不代表**已�
 5. 由 repository 管理者在 GitHub 設定 main 的分支保護（必要檢查 `test`、`test-cross-os (windows-latest)`、`test-cross-os (macos-latest)`，並禁止 force push）。
 
 ## G. 安裝、更新、退版步驟
+- **交付包**：`docs/LOCAL_DEPLOYMENT.md` 第 15 節（產生、內容、驗證）。
 - **安裝**：`docs/LOCAL_DEPLOYMENT.md` 第 2 節（Windows）、第 3 節（macOS）、第 4 節（Docker）；完成後執行 `tools/check_env.py`。
 - **啟動**：雙擊 `start_windows.bat` 或 `start_macos.command`。
 - **更新**：`docs/LOCAL_DEPLOYMENT.md` 第 10 節：先建立並確認「更新前」備份，保留舊版資料夾，在新資料夾以 `requirements-lock.txt` 安裝新版並執行測試。

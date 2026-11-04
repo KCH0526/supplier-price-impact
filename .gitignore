@@ -15,3 +15,4 @@ pytest-junit.xml
 pytest.log
 pip-install.log
 pip-freeze.txt
+dist/

@@ -11,7 +11,7 @@
 ## 1. 安裝成功
 - [ ] 依 `docs/LOCAL_DEPLOYMENT.md` 第 2 節（Windows）或第 3 節（macOS）完成安裝，沒有修改任何系統安全設定。
 - [ ] 執行 `tools/check_env.py --data-dir <打算放資料的資料夾>`，四項都顯示 `[OK]`（Python 3.11、套件與 `requirements-lock.txt` 相同、連接埠、資料夾可寫入）。
-- [ ] （選做，約 1 分鐘）`python -m pytest -q -rs` 顯示 0 failed、0 skipped。
+- [ ] （選做，只適用於從原始碼專案安裝；交付包不含測試）`python -m pytest -q -rs` 顯示 0 failed、0 skipped。
 
 ## 2. 系統正常啟動
 - [ ] 雙擊 `start_windows.bat`（Windows）或 `start_macos.command`（macOS），瀏覽器開啟視窗中顯示的 `Local URL`，看到「毛利風險報告」頁面。
