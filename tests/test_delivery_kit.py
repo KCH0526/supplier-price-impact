@@ -17,8 +17,9 @@ FILES = {
     "07_SERVICE_PACKAGE.md": "服務範圍",
     "08_CLIENT_FAQ.md": "常見客戶問題",
     "09_DATA_DELETION.md": "資料清除",
+    "11_TRIAL_KIT.md": "第一位客戶試用",
 }
-LEGAL = ["03_DEIDENTIFICATION_AND_CONSENT.md", "07_SERVICE_PACKAGE.md", "09_DATA_DELETION.md"]
+LEGAL = ["03_DEIDENTIFICATION_AND_CONSENT.md", "07_SERVICE_PACKAGE.md", "09_DATA_DELETION.md", "11_TRIAL_KIT.md"]
 
 
 def _text(name):
@@ -70,3 +71,12 @@ def test_markdown_tables_in_kit_are_well_formed():
 
 def test_readme_links_the_kit():
     assert "docs/delivery/README.md" in (ROOT / "README.md").read_text(encoding="utf-8")
+
+
+def test_trial_kit_prices_are_assumptions_and_no_customers_claimed():
+    text = _text("11_TRIAL_KIT.md")
+    for line in text.splitlines():
+        if "NT$" in line:
+            assert "假設" in line, line
+    assert "沒有**任何付費客戶" in text
+    assert text.count("?") + text.count("？") >= 10  # ten interview questions

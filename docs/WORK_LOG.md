@@ -26,8 +26,8 @@
 | #22 | 批次成本模型（`core/batch_cost.py`，兩種互斥模式） | 已合併（main `0dcb3a1`） |
 | #23 | 數量階梯與最低報價（`core/quantity_tiers.py`） | 已合併（main `e68f5a9`） |
 | #24 | 報價版本比較（`core/quote_versions.py`） | 已合併（main `aeb6220`） |
-| #25 | 報價工作台頁面（`pages/3_報價工作台.py`）、內部報告、文件 | 進行中（分支 `claude/pr25-quote-workbench`） |
-| #26 | 最終安全、品質及交付驗收 | 未開始 |
+| #25 | 報價工作台頁面（`pages/3_報價工作台.py`）、內部報告、文件 | 已合併（main `51e18c7`）※ 合併時 CI 尚在執行，事後確認 CI 通過（見下方紀錄） |
+| #26 | 最終安全、品質及交付驗收（對抗測試、Docker、試用工具包） | 已提交 PR #26（合併 SHA 由下一個 session 補記） |
 
 技術 MVP 已完成，以合成資料驗收。交付閘門見 `docs/RELEASE_GATE.md`。商業驗證尚未開始（見 `docs/GO_TO_MARKET.md` 第 9 節）。
 
@@ -46,9 +46,14 @@ streamlit run app.py --server.address=127.0.0.1
 - `samples/sample_bom.xlsx`、`samples/sample_price_increase.xlsx`、`samples/sample_open_quotes.xlsx`
 - `tests/fixtures/` 內全部檔案
 
+## 流程異常紀錄
+
+- PR #25：查詢 CI 與合併的指令同時送出，導致在 CI 完成前就合併。事後確認該次 CI（run 41785311806）結果為 success。
+  main 沒有設定「必要 status check」，所以 GitHub 沒有擋下。**建議在 GitHub 的分支保護中，把 CI 的 test 設為必要檢查。**
+
 ## PR 連結
 
-#6～#20：https://github.com/KCH0526/supplier-price-impact/pull/6 至 /pull/20（編號依序）。
+#6～#26：https://github.com/KCH0526/supplier-price-impact/pull/6 至 /pull/26（編號依序）。
 
 ## 已知限制（截至 PR #20；完整清單見 `docs/LIMITATIONS.md`）
 
