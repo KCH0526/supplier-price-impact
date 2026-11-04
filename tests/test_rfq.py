@@ -114,3 +114,14 @@ def test_mapping_path_with_different_column_names():
             "詢價數量": "數量", "計價單位": "單位", "幣別": "幣", "詢價版本": "版"}
     r = read_rfq(data, columns=cols)
     assert [c["case_id"] for c, _ in r.cases] == ["C-9|Q9|v2"]
+
+
+def test_partial_reimport_saves_nothing(tmp_path):
+    store = CaseStore(tmp_path / "c.db", enabled=True)
+    store.initialize()
+    imp = read_rfq(SAMPLE)
+    case, lines = imp.cases[-1]
+    store.add_case(case, lines, reason="先手動建立一筆")
+    with pytest.raises(StoreError, match="未保存任何案件"):
+        save_rfq_cases(store, imp, reason="整批匯入")
+    assert [c["case_id"] for c in store.list_cases()] == [case["case_id"]]

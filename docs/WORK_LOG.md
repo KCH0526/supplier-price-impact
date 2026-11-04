@@ -35,8 +35,8 @@
 | #31 | 商業化與上線驗收文件（`docs/launch/` 13 份） | 已合併（main `8434626`） |
 | #32 | 本機案件資料保存層（`core/case_store.py`）與路線圖（`docs/PRODUCTION_QUOTING_ROADMAP.md`） | 已合併（`fde3e0c`） |
 | #33 | 客戶詢價 RFQ 匯入（`core/rfq.py`）、合成樣本 `samples/rfq/rfq_sample.xlsx`、案件狀態流程 | 已合併（`895f8f0`） |
-| #34 | 成交與實際成本回饋、差異分析（`core/quote_feedback.py`） | 進行中（分支 `claude/quote-feedback`） |
-| #35 | 案件工作台頁面與稽核報告 | 未開始 |
+| #34 | 成交與實際成本回饋、差異分析（`core/quote_feedback.py`） | 已合併（`9c5712c`） |
+| #35 | 案件工作台頁面（`pages/4_案件工作台.py`）與 6 張工作表的內部稽核報告（`core/case_report.py`） | 進行中（分支 `claude/case-workbench`） |
 | #36 | 候選版本驗收與文件 | 未開始 |
 
 技術 MVP 已完成，以合成資料驗收。交付閘門見 `docs/RELEASE_GATE.md`。商業驗證尚未開始（見 `docs/GO_TO_MARKET.md` 第 9 節）。
