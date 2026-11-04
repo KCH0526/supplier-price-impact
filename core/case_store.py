@@ -283,6 +283,31 @@ class CaseStore:
             r["cost_snapshot"] = decode(json.loads(r["cost_snapshot"]))
         return rows
 
+    # ---------- outcomes (append-only revisions) ----------
+    def add_outcome(self, case_id, line_no, version: int, data: dict, reason: str, source: str | None = None) -> int:
+        if not str(reason or "").strip():
+            raise StoreError("回填結果必須填寫原因")
+        payload = json.dumps(encode(data), ensure_ascii=False)
+
+        def run(con):
+            if not con.execute("SELECT 1 FROM quote_versions WHERE case_id=? AND line_no=? AND version=?",
+                               (case_id, line_no, version)).fetchone():
+                raise StoreError(f"找不到案件 {case_id} 明細 {line_no} 的報價版本 v{version}")
+            revision = con.execute("SELECT COALESCE(MAX(revision), 0) + 1 FROM outcomes "
+                                   "WHERE case_id=? AND line_no=? AND version=?", (case_id, line_no, version)).fetchone()[0]
+            con.execute("INSERT INTO outcomes VALUES (?, ?, ?, ?, ?, ?, ?)",
+                        (case_id, line_no, version, revision, payload, _now(), reason))
+            _insert_event(con, case_id, "outcome", "回填結果", None, f"{line_no}#v{version}#r{revision}", reason, source)
+            return revision
+        return self._write(run)
+
+    def outcomes(self, case_id, line_no, version: int) -> list[dict]:
+        rows = self._read("SELECT * FROM outcomes WHERE case_id=? AND line_no=? AND version=? ORDER BY revision",
+                          (case_id, line_no, version))
+        for r in rows:
+            r["data"] = decode(json.loads(r["data"]))
+        return rows
+
     def events(self, case_id) -> list[dict]:
         return self._read("SELECT * FROM events WHERE case_id=? ORDER BY id", (case_id,))
 
