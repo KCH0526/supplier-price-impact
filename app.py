@@ -258,5 +258,6 @@ if __name__ == "__main__":
         st.Page(main, title="毛利風險報告", icon="📊", default=True),
         st.Page("pages/1_Excel_欄位對應.py", title="Excel 欄位對應", icon="🔗"),
         st.Page("pages/2_歷史報價與建議報價.py", title="歷史報價與建議報價", icon="🗂️"),
+        st.Page("pages/3_報價工作台.py", title="報價工作台", icon="🧮"),
     ])
     navigation.run()
