@@ -13,6 +13,15 @@
 > 範例 Excel 全部是人工建構的合成資料，不是任何企業或 ERP 的真實資料。
 > 本工具未取得鼎新、SAP、Oracle、正航或任何 ERP 廠商的認證或合作。
 
+### 5 分鐘看懂（全部是合成資料）
+
+- 範例結果：[`demo/example_result.xlsx`](demo/example_result.xlsx)（由三份 `samples/` 檔案產生，可用 `python demo/build_example_result.py` 重新產生）
+- 第一次使用教學（有截圖）：[`docs/FIRST_TIME_GUIDE.md`](docs/FIRST_TIME_GUIDE.md)
+- 60 秒展示腳本：[`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md)
+- 一頁式介紹：[`docs/ONE_PAGER.md`](docs/ONE_PAGER.md)
+- 服務內容與限制（草案）：[`docs/SERVICE_SCOPE.md`](docs/SERVICE_SCOPE.md)
+- 操作影片（無聲）：[`docs/media/demo_walkthrough.webm`](docs/media/demo_walkthrough.webm)
+
 ---
 
 ## 1. 解決什麼業務問題
