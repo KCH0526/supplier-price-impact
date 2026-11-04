@@ -5,8 +5,10 @@
 本系統只在本機執行，沒有登入、角色與權限，**不支援多使用者**；不連線到外部 API 或服務。
 「案件工作台」的操作人欄位是「人工填寫（未經身分驗證）」，不是電子簽核。
 
-> 實測狀況：Linux（Python 3.11.18）與 Docker（`python:3.11-slim`）已實際安裝、執行完整測試與瀏覽器端對端驗收。
-> **Windows 與 macOS 的步驟尚未在實機驗證**；第一次安裝時請照第 7 節做一次驗收並記錄結果。
+> 實測狀況（三種層級，請勿混為一談）：
+> 1. **開發環境 Linux 與 Docker**：Python 3.11.18 與 `python:3.11-slim` 已實際安裝，並完成完整測試與瀏覽器端對端驗收。
+> 2. **GitHub-hosted runner**（PR #38 起，每個 PR 自動執行）：Windows Server 2025 x64 與 macOS 26 arm64，Python 3.11.9、Node.js 22，以 `requirements-lock.txt` 安裝。567 passed、0 failed、0 skipped（見第 13 節）。這證明鎖定的套件可以安裝，且程式與測試可以跨作業系統執行。
+> 3. **客戶的實體電腦、Windows 10/11 桌機、Intel Mac、Docker Desktop**：**尚未在實機驗證**。runner 是乾淨的雲端虛擬機，沒有公司防毒、權限政策、中文使用者名稱、OneDrive 等真實環境因素。第一次安裝時，請照第 7 節做一次驗收並記錄結果。
 
 ## 1. 安裝前準備
 - Python **3.11**（3.11.x 皆可；其他版本未驗收）。
@@ -136,3 +138,24 @@ docker run -d --name spi -p 127.0.0.1:8501:8501 -v /path/to/case_data:/data supp
 - 不要把資料庫、備份、真實的 RFQ／成本／報價 Excel 放進 Git 或上傳到 GitHub（`.gitignore` 已排除 `*.db`、`*.sqlite`、`*.sqlite3`、`*.db-journal`、`case_backups/`、`case_data/`）。測試與示範只使用 `samples/` 中的合成資料。
 - 本系統不呼叫外部 API、不使用外部 AI、不寄送任何資料。
 - 不支援多使用者：不要讓多台電腦同時開啟同一個資料庫，也不要把資料庫放在共享磁碟。
+
+## 13. 跨作業系統 CI 證據（GitHub-hosted runner）
+`.github/workflows/ci.yml` 對每個 PR 執行：
+- `test`（Ubuntu，main 的必要檢查）
+- `test-cross-os`（windows-latest、macos-latest）
+
+三者都使用 Python 3.11、Node.js 22 與 `requirements-lock.txt`。任何 failed、error 或 skipped 都會讓 CI 失敗（`tools/ci_report.py`）。每次執行都會把 `pytest-junit.xml`、`pip-install.log`、`pip-freeze.txt` 保存為 artifact，保留 30 天。
+
+| 環境 | 實際版本（PR #38 的執行紀錄） | 依賴安裝 | 結果 |
+|---|---|---|---|
+| Ubuntu（ubuntu-latest） | Ubuntu x64、Python 3.11.17、Node.js 22 | lock 中 38 個套件（colorama 依標記略過） | 567 passed、0 failed、0 skipped |
+| Windows（windows-latest） | Windows Server 2025（10.0.26100）x64、Python 3.11.9、Node.js 22.23.4 | lock 全部 39 個套件（含只在 Windows 安裝的 colorama 0.4.6） | 567 passed、0 failed、0 skipped |
+| macOS（macos-latest） | macOS 26.6.2 arm64、Python 3.11.9、Node.js 22.23.4 | lock 中 38 個套件（colorama 依標記略過） | 567 passed、0 failed、0 skipped |
+
+在 Windows runner 上第一次執行時發現並修正了 2 個問題，都不是商業計算的問題：
+- `tests/test_web_calculators.py` 以系統預設編碼（Windows 為 cp1252）讀取 Node.js 的 UTF-8 輸出，中文錯誤訊息導致 18 項失敗。修正方式是明確指定 UTF-8。
+- `benchmarks/run_benchmark.py` 匯入只存在於 Unix 的 `resource` 模組，在 Windows 無法執行。改為：Windows 使用標準函式庫 `ctypes` 讀取 PeakWorkingSetSize；macOS 的 `ru_maxrss` 單位是位元組，修正了先前把它當成 KB 的換算錯誤。
+
+測試沒有任何只適用於特定作業系統的 skip。
+
+仍未驗證：Windows 10/11 桌面版、Intel Mac、中文或含空白的使用者名稱路徑、公司防毒與群組原則、Docker Desktop（Windows／macOS），以及以瀏覽器實際操作 Windows／macOS 上的網頁（CI 只執行 Streamlit AppTest，不開啟真實瀏覽器）。

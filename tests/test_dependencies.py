@@ -51,7 +51,12 @@ def test_python_311():
 
 
 def test_ci_and_docker_install_from_the_lock():
-    assert "pip install -r requirements-lock.txt" in (ROOT / ".github" / "workflows" / "ci.yml").read_text()
+    ci = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    assert "pip install -r requirements-lock.txt" in ci
+    # Ubuntu "test" stays the required check; Windows and macOS run the same locked install.
+    assert "\n  test:\n" in ci and "windows-latest" in ci and "macos-latest" in ci
+    assert 'python-version: "3.11"' in ci and 'node-version: "22"' in ci
+    assert "requirements.txt" not in ci.replace("requirements-lock.txt", "")
     docker = (ROOT / "Dockerfile").read_text()
     assert "requirements-lock.txt" in docker and "-r requirements-lock.txt" in docker
     assert "FROM python:3.11-slim" in docker and "USER appuser" in docker
@@ -77,7 +82,7 @@ def test_deployment_guide_covers_required_topics_honestly():
     for topic in ("Windows 安裝", "macOS 安裝", "Docker 啟動", "本機資料庫位置", "磁碟權限與加密", "## 8. 備份",
                   "## 9. 還原", "更新程式前的備份流程", "資料庫無法開啟", "備份損毀", "儲存空間不足", "權限不足",
                   "安裝套件失敗", "系統版本不相容", "requirements-lock.txt", "127.0.0.1", "尚未在實機驗證",
-                  "不支援多使用者", "沒有加密"):
+                  "不支援多使用者", "沒有加密", "GitHub-hosted runner", "Docker Desktop"):
         assert topic in text, topic
     for forbidden in ("支援多使用者權限", "已通過真實 ERP", "已加密"):
         assert forbidden not in text
