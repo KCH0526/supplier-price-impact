@@ -252,4 +252,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    navigation = st.navigation([
+        st.Page(main, title="毛利風險報告", icon="📊", default=True),
+        st.Page("pages/1_Excel_欄位對應.py", title="Excel 欄位對應", icon="🔗"),
+    ])
+    navigation.run()
