@@ -42,9 +42,10 @@
 | #38 | Windows／macOS GitHub-hosted runner 的鎖定安裝與完整 pytest（`test-cross-os`）；四視角審查 `docs/FINAL_QUALITY_REVIEW.md` | 已合併（main `4de325d36b05bb3a774b07c05a92e424f0732c0a`） |
 | #39 | 修復 SQLite 路徑特殊字元缺陷（`#`／`?`／`%` 會讓唯讀檢查失效、有效備份無法還原，甚至以空白資料庫覆蓋資料）；完整生命週期備份還原逐筆比對（`tests/test_recovery_integrity.py`，詳見 `docs/LOCAL_DEPLOYMENT.md` 第 14 節） | 已合併（main `b8946d62199057a37159aa781514cb2702f4d8ef`） |
 | #40 | 首次安裝與交付：`start_windows.bat`／`start_macos.command`、`tools/check_env.py`、`docs/FIRST_USE_CHECKLIST.md`；安裝說明不再要求修改執行原則；案件工作台重複按保存不再產生重複紀錄 | 已合併（main `36ab3a26d7e9cf5645c492831655862525e23491`） |
-| #41 | 產品文件與專案整理：新 README（產品介紹、六大模組）、原 README 搬到 `docs/USER_GUIDE.md`、`docs/REPOSITORY_INVENTORY.md`、`docs/FINAL_DELIVERY_REPORT.md`、Markdown 連結檢查 | 進行中（分支 `claude/final-docs`） |
+| #41 | 產品文件與專案整理：新 README（產品介紹、六大模組）、原 README 搬到 `docs/USER_GUIDE.md`、`docs/REPOSITORY_INVENTORY.md`、`docs/FINAL_DELIVERY_REPORT.md`、Markdown 連結檢查 | 已合併（main `4b1c7146c915a178ed80056ac7164abc0aebc10b`） |
+| #42 | 企業單機版交付包（`tools/build_release.py`，允許清單、SHA-256 清單、可重現）、交付包測試、文件收尾；這是最後一個開發 PR，合併 SHA 以 GitHub 紀錄為準 | 進行中（分支 `claude/release-bundle`） |
 
-單機企業版的功能與文件已完成，以合成資料驗收。交付證據見 `docs/FINAL_DELIVERY_REPORT.md` 與 `docs/RELEASE_GATE.md`。
+**最終狀態**：單機企業版的功能、文件與交付包已完成，以合成資料驗收；Ubuntu、Windows、macOS 的 CI 都是 0 failed、0 skipped。交付證據見 `docs/FINAL_DELIVERY_REPORT.md`。PR #42 之後停止新的開發；後續工作應依真實企業試用的回饋另行規劃。
 
 ### 企業內部版 Release Candidate 的使用限制（PR #32～#37）
 
@@ -123,5 +124,5 @@ streamlit run app.py --server.address=127.0.0.1
 
 - 雲端開發環境的 Docker build：先啟動 `dockerd`，再執行
   `docker buildx build --network host --secret id=corp_ca,src=/root/.ccr/ca-bundle.crt -t spi --load .`
-- 額度：使用者回報剩餘 US$86（2026-11-04 PR #11 開始時）、US$75（PR #16 開始時）；US$64（PR #21 開始時）；US$35（PR #32 開始時）；PR #37 開始時未提供；US$24（PR #38 開始時，使用者回報）；US$20（PR #39 開始時，使用者回報）；US$16（PR #40 開始時，使用者回報）；US$13（PR #41 開始時，使用者回報）；各階段實際花費未知。session 內無法讀取實際用量，所以各階段實際花費未知。
+- 額度：使用者回報剩餘 US$86（2026-11-04 PR #11 開始時）、US$75（PR #16 開始時）；US$64（PR #21 開始時）；US$35（PR #32 開始時）；PR #37 開始時未提供；US$24（PR #38 開始時，使用者回報）；US$20（PR #39 開始時，使用者回報）；US$16（PR #40 開始時，使用者回報）；US$13（PR #41 開始時，使用者回報）；US$9（PR #42 開始時，使用者回報）；各階段實際花費未知。session 內無法讀取實際用量，所以各階段實際花費未知。
 - `gh` CLI 只能用於搜尋；PR 操作請使用 GitHub MCP 工具。

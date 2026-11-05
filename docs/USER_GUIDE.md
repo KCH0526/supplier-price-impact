@@ -278,7 +278,7 @@ docker compose up --build
 python -m pytest -q -rs
 ```
 
-結果必須是 0 failed、0 skipped。GitHub Actions 也會在 Python 3.11 上執行同樣的測試。
+結果必須是 0 failed、0 skipped。GitHub Actions 也會在 Python 3.11 上執行同樣的測試。測試只包含在原始碼專案中；企業單機版交付包不含測試，請改用 `tools/check_env.py` 與 `FIRST_USE_CHECKLIST.md` 驗收。
 
 驗收基準檔包括：
 

@@ -9,7 +9,7 @@
 python3.11 -m venv .venv
 . .venv/bin/activate
 python -m pip install -r requirements-lock.txt   # 固定版本
-python -m pytest -q -rs          # 必須 0 failed、0 skipped
+python -m pytest -q -rs          # 原始碼專案：必須 0 failed、0 skipped（交付包不含測試）
 streamlit run app.py --server.address=127.0.0.1
 ```
 

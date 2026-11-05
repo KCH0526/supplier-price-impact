@@ -107,7 +107,7 @@ Supplier Price Impact 協助台灣中小型製造、加工、組裝與代工企�
 
 ## 安裝與啟動
 
-需要 **Python 3.11**。安裝一律使用 `requirements-lock.txt`，與驗收環境的套件版本完全相同。完整步驟、常見問題與故障排除見 [`docs/LOCAL_DEPLOYMENT.md`](docs/LOCAL_DEPLOYMENT.md)。
+需要 **Python 3.11**。安裝一律使用 `requirements-lock.txt`，與驗收環境的套件版本完全相同。企業可以直接使用原始碼專案，或使用只含執行與操作所需檔案的單機版交付包（ZIP，附 SHA-256 檔案清單；產生與驗證方式見 [`docs/LOCAL_DEPLOYMENT.md`](docs/LOCAL_DEPLOYMENT.md) 第 15 節）。完整步驟、常見問題與故障排除見 [`docs/LOCAL_DEPLOYMENT.md`](docs/LOCAL_DEPLOYMENT.md)。
 
 ### Windows
 第一次安裝（在專案資料夾開啟 PowerShell）：
